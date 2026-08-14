@@ -8,7 +8,6 @@ final class BufferManager: ObservableObject {
 
     enum BufferState: Equatable {
 
-        case empty
         case buffering
         case ready
         case stalled
@@ -16,12 +15,13 @@ final class BufferManager: ObservableObject {
     }
 
 
-    @Published var state: BufferState = .empty
+    @Published var state: BufferState = .buffering
+
 
 
     private var observers: [NSKeyValueObservation] = []
 
-    private var notificationObservers: [NSObjectProtocol] = []
+    private var notifications: [NSObjectProtocol] = []
 
 
 
@@ -47,24 +47,22 @@ final class BufferManager: ObservableObject {
                 case .readyToPlay:
 
                     self?.state = .ready
+
                     print("Buffer: ready")
 
 
                 case .failed:
 
                     self?.state = .stalled
+
                     print("Buffer: stalled")
 
 
-                case .unknown:
+                default:
 
                     self?.state = .buffering
+
                     print("Buffer: buffering")
-
-
-                @unknown default:
-
-                    break
 
                 }
 
@@ -82,10 +80,10 @@ final class BufferManager: ObservableObject {
 
             if item.isPlaybackBufferEmpty {
 
-
                 DispatchQueue.main.async {
 
                     self?.state = .buffering
+
                     print("Buffer: buffering")
 
                 }
@@ -104,10 +102,10 @@ final class BufferManager: ObservableObject {
 
             if item.isPlaybackLikelyToKeepUp {
 
-
                 DispatchQueue.main.async {
 
                     self?.state = .ready
+
                     print("Buffer: ready")
 
                 }
@@ -118,7 +116,7 @@ final class BufferManager: ObservableObject {
 
 
 
-        let stalledObserver = NotificationCenter.default.addObserver(
+        let stalled = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemPlaybackStalled,
             object: item,
             queue: .main
@@ -134,17 +132,13 @@ final class BufferManager: ObservableObject {
 
 
         observers = [
-
             statusObserver,
             emptyObserver,
             keepUpObserver
-
         ]
 
 
-        notificationObservers.append(
-            stalledObserver
-        )
+        notifications.append(stalled)
 
     }
 
@@ -154,10 +148,8 @@ final class BufferManager: ObservableObject {
     func reset() {
 
 
-        observers.forEach { observer in
-
-            observer.invalidate()
-
+        observers.forEach {
+            $0.invalidate()
         }
 
 
@@ -165,20 +157,15 @@ final class BufferManager: ObservableObject {
 
 
 
-        notificationObservers.forEach { observer in
+        notifications.forEach {
 
-            NotificationCenter.default.removeObserver(observer)
+            NotificationCenter.default.removeObserver($0)
 
         }
 
 
-        notificationObservers.removeAll()
-
-
-
-        state = .empty
+        notifications.removeAll()
 
     }
-
 
 }

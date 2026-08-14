@@ -14,7 +14,7 @@ struct MenuBarView: View {
 
         VStack(spacing: 12) {
 
-            if appState.player.isPlaying {
+            if appState.player.state == .playing {
 
                 Image(systemName: "radio.fill")
                     .font(.system(size: 28))
@@ -39,7 +39,7 @@ struct MenuBarView: View {
                     Text(station.name)
                         .font(.headline)
 
-                    Text(appState.player.isPlaying ? "Playing" : "Paused")
+                    Text(appState.player.state.description)
                         .foregroundStyle(.secondary)
 
                 }

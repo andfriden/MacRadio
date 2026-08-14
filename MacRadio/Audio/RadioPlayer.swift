@@ -6,49 +6,44 @@ import Combine
 final class RadioPlayer: ObservableObject {
 
 
+    private var player: AVPlayer?
+
+
     private let bufferManager = BufferManager()
+
+
+    private var bufferObserver: AnyCancellable?
+
 
 
     @Published var state: PlayerState = .idle
 
-    @Published var isPlaying = false
 
     @Published var currentStation: RadioStation?
 
+
     @Published var volume: Double = 1.0 {
+
         didSet {
+
             player?.volume = Float(volume)
+
         }
+
     }
 
-
-
-    private var player: AVPlayer?
-
-    private var bufferObserver: AnyCancellable?
-
-    private var itemObserver: NSKeyValueObservation?
 
 
 
     func play(station: RadioStation) {
 
 
-        print("Starting:", station.name)
-
-        print(
-            "Trying URL:",
-            station.streamURL.absoluteString
-        )
-
-
-        stop()
-
-
-
         currentStation = station
 
         state = .connecting
+
+
+        print("Starting:", station.name)
 
 
 
@@ -57,41 +52,53 @@ final class RadioPlayer: ObservableObject {
         )
 
 
-        item.preferredForwardBufferDuration = 30
-
-
 
         bufferManager.observe(
             item: item
         )
 
 
-        observeBuffer()
+
+        bufferObserver = bufferManager.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bufferState in
+
+
+                switch bufferState {
+
+
+                case .buffering:
+
+                    self?.state = .buffering
+
+
+                case .ready:
+
+                    self?.state = .playing
+
+
+                case .stalled:
+
+                    self?.state = .error(
+                        "Stream stalled"
+                    )
+
+                }
+
+            }
 
 
 
-        let avPlayer = AVPlayer(
+
+        player = AVPlayer(
             playerItem: item
         )
 
 
-        avPlayer.volume = Float(volume)
-
-        avPlayer.automaticallyWaitsToMinimizeStalling = true
+        player?.volume = Float(volume)
 
 
-
-        player = avPlayer
-
-
-
-        observeItem(
-            item
-        )
-
-
-
-        avPlayer.play()
+        player?.play()
 
     }
 
@@ -103,9 +110,19 @@ final class RadioPlayer: ObservableObject {
 
         player?.pause()
 
-        isPlaying = false
-
         state = .paused
+
+    }
+
+
+
+
+    func resume() {
+
+
+        player?.play()
+
+        state = .playing
 
     }
 
@@ -117,174 +134,11 @@ final class RadioPlayer: ObservableObject {
 
         player?.pause()
 
-
         player = nil
 
 
-        currentStation = nil
-
-
-        isPlaying = false
-
         state = .idle
 
-
-        itemObserver?.invalidate()
-
-        itemObserver = nil
-
-
-        bufferObserver?.cancel()
-
-        bufferObserver = nil
-
-
-        bufferManager.reset()
-
     }
-
-
-
-
-    func resume() {
-
-
-        guard let player else {
-            return
-        }
-
-
-        player.play()
-
-    }
-
-
-
-
-
-    private func observeItem(
-        _ item: AVPlayerItem
-    ) {
-
-
-        itemObserver = item.observe(
-            \.status,
-            options: [.new]
-        ) { [weak self] item, _ in
-
-
-            DispatchQueue.main.async {
-
-
-                guard let self else {
-                    return
-                }
-
-
-
-                switch item.status {
-
-
-                case .readyToPlay:
-
-
-                    self.state = .playing
-
-                    self.isPlaying = true
-
-
-
-                case .failed:
-
-
-                    self.state = .error(
-                        item.error?.localizedDescription
-                        ?? "Unknown error"
-                    )
-
-
-                    self.isPlaying = false
-
-
-
-                case .unknown:
-
-
-                    self.state = .buffering
-
-
-
-                @unknown default:
-
-                    break
-
-                }
-
-            }
-
-        }
-
-    }
-
-
-
-
-
-
-
-    private func observeBuffer() {
-
-
-        bufferObserver = bufferManager.$state
-
-            .receive(on: DispatchQueue.main)
-
-            .sink { [weak self] bufferState in
-
-
-
-                guard let self else {
-                    return
-                }
-
-
-
-                switch bufferState {
-
-
-                case .empty:
-
-                    break
-
-
-
-                case .buffering:
-
-                    self.state = .buffering
-
-
-
-                case .ready:
-
-                    self.state = .playing
-
-                    self.isPlaying = true
-
-
-
-                case .stalled:
-
-                    self.state = .error(
-                        "Stream stalled"
-                    )
-
-                    self.isPlaying = false
-
-                }
-
-            }
-
-    }
-
 
 }

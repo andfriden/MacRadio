@@ -1,30 +1,19 @@
-//
-//  PlayerState.swift
-//  MacRadio
-//
-//  Created by Андерс Фриден on 14.08.2026.
-//
-
 import Foundation
 
 
 enum PlayerState: Equatable {
 
+
     case idle
-
     case connecting
-
     case buffering
-
     case playing
-
     case paused
-
     case error(String)
 
 
 
-    var title: String {
+    var description: String {
 
         switch self {
 
