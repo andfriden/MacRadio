@@ -4,7 +4,7 @@ import SwiftUI
 
 struct MenuBarView: View {
 
-    @EnvironmentObject var player: RadioPlayer
+    @EnvironmentObject var appState: AppState
 
     private let loader = StationLoader()
 
@@ -26,14 +26,14 @@ struct MenuBarView: View {
             Divider()
 
 
-            if let station = player.currentStation {
+            if let station = appState.player.currentStation {
 
                 VStack {
 
                     Text(station.name)
                         .font(.headline)
 
-                    Text(player.isPlaying ? "Playing" : "Paused")
+                    Text(appState.player.isPlaying ? "Playing" : "Paused")
                         .foregroundStyle(.secondary)
 
                 }
@@ -53,7 +53,7 @@ struct MenuBarView: View {
 
                 Button {
 
-                    player.play(
+                    appState.player.play(
                         station: station
                     )
 
@@ -78,7 +78,7 @@ struct MenuBarView: View {
 
                 Button {
 
-                    player.pause()
+                    appState.player.pause()
 
                 } label: {
 
@@ -89,9 +89,9 @@ struct MenuBarView: View {
 
                 Button {
 
-                    if let station = player.currentStation {
+                    if let station = appState.player.currentStation {
 
-                        player.play(
+                        appState.player.play(
                             station: station
                         )
 
