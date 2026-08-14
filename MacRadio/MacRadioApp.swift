@@ -7,11 +7,25 @@
 
 import SwiftUI
 
+
 @main
 struct MacRadioApp: App {
+
+    @StateObject private var player = RadioPlayer()
+
+
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+
+        MenuBarExtra(
+            "MacRadio",
+            systemImage: "dot.radiowaves.left.and.right"
+        ) {
+
+            MenuBarView()
+                .environmentObject(player)
+
         }
+        .menuBarExtraStyle(.window)
+
     }
 }
