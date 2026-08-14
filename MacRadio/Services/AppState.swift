@@ -11,7 +11,29 @@ import Combine
 
 final class AppState: ObservableObject {
 
-    @Published var player = RadioPlayer()
+
+    let player: RadioPlayer
+
+
+    private var cancellables = Set<AnyCancellable>()
+
+
+    init() {
+
+        player = RadioPlayer()
+
+
+        player.objectWillChange
+            .sink { [weak self] _ in
+
+                self?.objectWillChange.send()
+
+            }
+            .store(
+                in: &cancellables
+            )
+
+    }
 
 }
 

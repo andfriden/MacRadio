@@ -10,14 +10,20 @@ struct MenuBarView: View {
 
     @State private var stations: [RadioStation] = []
 
-
     var body: some View {
 
         VStack(spacing: 12) {
 
-            Image(systemName: "dot.radiowaves.left.and.right")
-                .font(.system(size: 28))
+            if appState.player.isPlaying {
 
+                Image(systemName: "radio.fill")
+                    .font(.system(size: 28))
+
+            } else {
+
+                Image(systemName: "radio")
+                    .font(.system(size: 28))
+            }
 
             Text("MacRadio")
                 .font(.headline)
