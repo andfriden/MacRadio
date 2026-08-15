@@ -9,6 +9,10 @@ final class RadioPlayer: ObservableObject {
     @Published var state: PlayerState = .stopped
 
     @Published var currentStation: RadioStation?
+    
+    @Published var currentArtist: String = ""
+
+    @Published var currentTrack: String = ""
 
 
     private var player: AVPlayer?
@@ -20,6 +24,10 @@ final class RadioPlayer: ObservableObject {
     ) {
 
         currentStation = station
+        
+        currentArtist = ""
+
+        currentTrack = ""
 
         state = .connecting
 
@@ -94,6 +102,10 @@ final class RadioPlayer: ObservableObject {
         player = nil
 
         currentStation = nil
+
+        currentArtist = ""
+
+        currentTrack = ""
 
         state = .stopped
     }
