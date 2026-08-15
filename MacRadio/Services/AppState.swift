@@ -50,10 +50,15 @@ final class AppState: ObservableObject {
             )
 
 
+        if !settings.lastStationID.isEmpty {
 
-        if let station = stationManager.currentStation {
+            if let station = stationManager.currentStation {
 
-            player.currentStation = station
+                player.play(
+                    station: station
+                )
+
+            }
 
         }
 

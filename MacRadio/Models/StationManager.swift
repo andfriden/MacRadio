@@ -2,13 +2,6 @@
 //  StationManager.swift
 //  MacRadio
 //
-//  Created by Андерс Фриден on 15.08.2026.
-//
-
-//
-//  StationManager.swift
-//  MacRadio
-//
 
 import Foundation
 import Combine
@@ -19,13 +12,12 @@ final class StationManager: ObservableObject {
 
     @Published var stations: [RadioStation] = []
 
-
     @Published var currentIndex: Int = 0
 
+    @Published var hasSelectedStation: Bool = false
 
 
     private let loader = StationLoader()
-
 
     private let settings: AppSettings
 
@@ -55,6 +47,13 @@ final class StationManager: ObservableObject {
 
     var currentStation: RadioStation? {
 
+        guard hasSelectedStation else {
+
+            return nil
+
+        }
+
+
         guard stations.indices.contains(currentIndex) else {
 
             return nil
@@ -72,7 +71,6 @@ final class StationManager: ObservableObject {
         _ station: RadioStation
     ) {
 
-
         guard let index = stations.firstIndex(where: {
 
             $0.id == station.id
@@ -86,6 +84,8 @@ final class StationManager: ObservableObject {
 
         currentIndex = index
 
+        hasSelectedStation = true
+
         saveLastStation()
 
     }
@@ -94,7 +94,6 @@ final class StationManager: ObservableObject {
 
     func nextStation() -> RadioStation? {
 
-
         guard !stations.isEmpty else {
 
             return nil
@@ -102,15 +101,25 @@ final class StationManager: ObservableObject {
         }
 
 
-        currentIndex += 1
-
-
-        if currentIndex >= stations.count {
+        if !hasSelectedStation {
 
             currentIndex = 0
 
+        } else {
+
+            currentIndex += 1
+
+
+            if currentIndex >= stations.count {
+
+                currentIndex = 0
+
+            }
+
         }
 
+
+        hasSelectedStation = true
 
         saveLastStation()
 
@@ -123,7 +132,6 @@ final class StationManager: ObservableObject {
 
     func previousStation() -> RadioStation? {
 
-
         guard !stations.isEmpty else {
 
             return nil
@@ -131,15 +139,25 @@ final class StationManager: ObservableObject {
         }
 
 
-        currentIndex -= 1
-
-
-        if currentIndex < 0 {
+        if !hasSelectedStation {
 
             currentIndex = stations.count - 1
 
+        } else {
+
+            currentIndex -= 1
+
+
+            if currentIndex < 0 {
+
+                currentIndex = stations.count - 1
+
+            }
+
         }
 
+
+        hasSelectedStation = true
 
         saveLastStation()
 
@@ -152,7 +170,6 @@ final class StationManager: ObservableObject {
 
     private func saveLastStation() {
 
-
         guard let station = currentStation else {
 
             return
@@ -160,7 +177,8 @@ final class StationManager: ObservableObject {
         }
 
 
-        settings.lastStationID = station.id.uuidString
+        settings.lastStationID =
+            station.id.uuidString
 
     }
 
@@ -168,11 +186,13 @@ final class StationManager: ObservableObject {
 
     private func restoreLastStation() {
 
-
-        let savedID = settings.lastStationID
+        let savedID =
+            settings.lastStationID
 
 
         guard !savedID.isEmpty else {
+
+            hasSelectedStation = false
 
             return
 
@@ -180,16 +200,22 @@ final class StationManager: ObservableObject {
 
 
 
-        if let index = stations.firstIndex(where: {
+        guard let index = stations.firstIndex(where: {
 
             $0.id.uuidString == savedID
 
-        }) {
+        }) else {
 
+            hasSelectedStation = false
 
-            currentIndex = index
+            return
 
         }
+
+
+        currentIndex = index
+
+        hasSelectedStation = true
 
     }
 
