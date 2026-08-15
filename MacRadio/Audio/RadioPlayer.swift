@@ -25,7 +25,7 @@ final class RadioPlayer: ObservableObject {
 
 
         let item = AVPlayerItem(
-            url: station.url
+            url: station.streamURL
         )
 
 
@@ -63,7 +63,6 @@ final class RadioPlayer: ObservableObject {
                 play(
                     station: station
                 )
-
             }
         }
     }
@@ -105,4 +104,5 @@ final class RadioPlayer: ObservableObject {
 
         state = .stopped
     }
+
 }
