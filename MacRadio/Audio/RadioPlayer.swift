@@ -16,6 +16,8 @@ final class RadioPlayer: ObservableObject {
 
 
     private var player: AVPlayer?
+    
+    private let metadataReader = ICYMetadataReader()
 
 
 
@@ -43,6 +45,25 @@ final class RadioPlayer: ObservableObject {
 
 
         player?.play()
+        
+        metadataReader.onMetadataUpdate = { [weak self] metadata in
+                        
+            let parser = RadioMetadata()
+
+            parser.update(
+                from: metadata
+            )
+
+            self?.currentArtist = parser.artist
+
+            self?.currentTrack = parser.title
+
+        }
+
+
+        metadataReader.start(
+            url: station.streamURL
+        )
 
         print("PLAY:", station.name)
         state = .playing
@@ -100,6 +121,8 @@ final class RadioPlayer: ObservableObject {
         player?.pause()
 
         player = nil
+        
+        metadataReader.stop()
 
         currentStation = nil
 

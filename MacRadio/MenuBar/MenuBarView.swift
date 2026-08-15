@@ -162,9 +162,17 @@ struct MenuBarView: View {
         case .playing:
 
 
-            MarqueeText(
-                text: "▶ \(stationName)"
-            )
+            HStack(alignment: .center, spacing: 6) {
+
+                Text("▶")
+                    .font(.system(size: 13))
+
+                MarqueeText(
+                    text: stationName
+                )
+                .frame(height: 18)
+
+            }
             .frame(width: 260)
 
 
@@ -204,9 +212,25 @@ struct MenuBarView: View {
 
     private var stationName: String {
 
+        let station =
+            appState.player.currentStation?.name
+            ?? ""
 
-        appState.player.currentStation?.name ?? "Стоп"
+        let artist =
+            appState.player.currentArtist
 
+        let track =
+            appState.player.currentTrack
+
+
+        if !artist.isEmpty && !track.isEmpty {
+
+            return "\(artist) — \(track) — \(station)"
+
+        }
+
+
+        return station
     }
 
 
