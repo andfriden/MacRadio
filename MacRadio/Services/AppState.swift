@@ -17,13 +17,29 @@ final class AppState: ObservableObject {
     let stationManager: StationManager
 
 
+    private var cancellables = Set<AnyCancellable>()
+
+
 
     init() {
 
 
+        player = RadioPlayer()
+
         stationManager = StationManager()
 
-        player = RadioPlayer()
+
+
+        player.objectWillChange
+            .sink { [weak self] _ in
+
+                self?.objectWillChange.send()
+
+            }
+            .store(
+                in: &cancellables
+            )
+
 
 
         setupAutoNextStation()

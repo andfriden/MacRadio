@@ -16,20 +16,9 @@ final class RadioPlayer: ObservableObject {
     var onStreamFailed: (() -> Void)?
 
 
-    @Published var state: PlayerState = .idle {
-        didSet {
-
-            if oldValue != state {
-
-
-            }
-
-        }
-    }
-
+    @Published var state: PlayerState = .idle
 
     @Published var currentStation: RadioStation?
-
 
     @Published var volume: Double = 1.0 {
 
@@ -91,36 +80,6 @@ final class RadioPlayer: ObservableObject {
                 }
 
             }
-
-        bufferObserver = bufferManager.$state
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] bufferState in
-
-
-                switch bufferState {
-
-
-                case .buffering:
-
-                    self?.state = .buffering
-
-
-                case .ready:
-
-                    self?.state = .playing
-
-
-                case .stalled:
-
-                    self?.state = .error(
-                        "Stream stalled"
-                    )
-
-                }
-
-            }
-
-
 
 
         player = AVPlayer(

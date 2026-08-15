@@ -10,17 +10,19 @@ struct MenuBarView: View {
 
     var body: some View {
 
-
         VStack(spacing: 12) {
 
 
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 28))
+                .foregroundStyle(.primary)
 
 
 
             Text("MacRadio")
-                .font(.headline)
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundStyle(.primary)
 
 
 
@@ -31,16 +33,24 @@ struct MenuBarView: View {
             if let station = appState.player.currentStation {
 
 
-                VStack {
+                VStack(spacing: 4) {
 
 
-                    Text(station.name)
-                        .font(.headline)
+                    Label(
+                        station.name,
+                        systemImage: "radio"
+                    )
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
 
 
 
-                    Text(appState.player.state.description)
-                        .foregroundStyle(.secondary)
+                    Label(
+                        appState.player.state.description,
+                        systemImage: "wave.3.right"
+                    )
+                    .font(.subheadline)
+                    .fontWeight(.medium)
 
 
                 }
@@ -50,29 +60,20 @@ struct MenuBarView: View {
 
 
                 Text("No station selected")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
 
 
             }
-
-
-
+                
 
             Divider()
-
 
 
 
             ForEach(appState.stationManager.stations) { station in
 
 
-
                 Button {
-
-
-                    appState.stationManager.select(
-                        station
-                    )
 
 
                     appState.player.play(
@@ -80,20 +81,19 @@ struct MenuBarView: View {
                     )
 
 
-
                 } label: {
-
 
 
                     HStack {
 
 
                         Image(systemName: "radio")
+                            .foregroundStyle(.primary)
 
 
 
                         Text(station.name)
-
+                            .foregroundStyle(.primary)
 
 
                     }
@@ -102,92 +102,35 @@ struct MenuBarView: View {
                 }
 
             }
-
-
-
-
-
+            .foregroundStyle(.primary)
+            
             Divider()
 
 
 
-
-            HStack {
-
-
-
-                Button {
-
-
-                    appState.player.pause()
-
-
-
-                } label: {
-
-
-                    Image(systemName: "pause.fill")
-
-
-                }
-
-
-
-
-
-                Button {
-
-
-
-                    if let station = appState.stationManager.currentStation {
-
-
-
-                        appState.player.play(
-                            station: station
-                        )
-
-
-                    }
-
-
-
-                } label: {
-
-
-                    Image(systemName: "play.fill")
-
-
-                }
-
-
-
-            }
-            .buttonStyle(.borderless)
-
-
-
-
-
-            Divider()
-
-
-
-
-            Button("Quit") {
+            Button {
 
 
                 NSApplication.shared.terminate(nil)
 
 
+            } label: {
+
+
+                HStack {
+
+                    Image(systemName: "xmark.circle")
+
+                    Text("Quit MacRadio")
+
+                }
+
             }
 
 
-
         }
-        .padding()
-        .frame(width: 280)
-
+        .padding(12)
+        .frame(width: 300)
 
     }
 
