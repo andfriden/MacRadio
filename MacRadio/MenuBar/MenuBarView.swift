@@ -22,7 +22,6 @@ struct MenuBarView: View {
             Text("MacRadio")
                 .font(.title3)
                 .fontWeight(.bold)
-                .foregroundStyle(.primary)
 
 
 
@@ -30,43 +29,62 @@ struct MenuBarView: View {
 
 
 
-            if let station = appState.player.currentStation {
-
-
-                VStack(spacing: 4) {
-
-
-                    Label(
-                        station.name,
-                        systemImage: "radio"
-                    )
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+            playerStatus
 
 
 
-                    Label(
-                        appState.player.state.description,
-                        systemImage: "wave.3.right"
-                    )
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+            Divider()
 
+
+
+            HStack(spacing: 20) {
+
+
+                Button {
+
+                    previousStation()
+
+                } label: {
+
+                    Image(systemName: "backward.fill")
 
                 }
 
 
-            } else {
+
+                Button {
+
+                    appState.player.toggle()
+
+                } label: {
+
+                    Image(systemName: playPauseIcon)
+
+                }
 
 
-                Text("No station selected")
-                    .foregroundStyle(.primary)
 
+                Button {
+
+                    nextStation()
+
+                } label: {
+
+                    Image(systemName: "forward.fill")
+
+                }
 
             }
-                
+            .font(.title3)
+
+
 
             Divider()
+
+
+
+            Text("Stations")
+                .font(.headline)
 
 
 
@@ -75,6 +93,8 @@ struct MenuBarView: View {
 
                 Button {
 
+
+                    appState.stationManager.select(station)
 
                     appState.player.play(
                         station: station
@@ -88,27 +108,25 @@ struct MenuBarView: View {
 
 
                         Image(systemName: "radio")
-                            .foregroundStyle(.primary)
-
 
 
                         Text(station.name)
-                            .foregroundStyle(.primary)
 
+
+                        Spacer()
 
                     }
-
 
                 }
 
             }
-            .foregroundStyle(.primary)
-            
+
+
+
             Divider()
 
-
-
-            Button {
+            
+           Button {
 
 
                 NSApplication.shared.terminate(nil)
@@ -117,13 +135,10 @@ struct MenuBarView: View {
             } label: {
 
 
-                HStack {
-
-                    Image(systemName: "xmark.circle")
-
-                    Text("Quit MacRadio")
-
-                }
+                Label(
+                    "Quit MacRadio",
+                    systemImage: "xmark.circle"
+                )
 
             }
 
@@ -131,6 +146,122 @@ struct MenuBarView: View {
         }
         .padding(12)
         .frame(width: 300)
+
+    }
+
+
+
+
+    @ViewBuilder
+    private var playerStatus: some View {
+
+
+        switch appState.player.state {
+
+
+        case .playing:
+
+
+            MarqueeText(
+                text: "▶ \(stationName)"
+            )
+            .frame(width: 260)
+
+
+
+        case .paused:
+
+
+            MarqueeText(
+                text: "⏸ \(stationName)"
+            )
+            .frame(width: 260)
+
+
+
+        case .connecting:
+
+
+            Text(
+                "⏳ \(stationName)"
+            )
+
+
+
+        case .stopped:
+
+
+            Text(
+                "⏹ Стоп"
+            )
+
+        }
+
+    }
+
+
+
+
+    private var stationName: String {
+
+
+        appState.player.currentStation?.name ?? "Стоп"
+
+    }
+
+
+
+
+    private var playPauseIcon: String {
+
+
+        switch appState.player.state {
+
+
+        case .playing:
+
+            return "pause.fill"
+
+
+        default:
+
+            return "play.fill"
+
+        }
+
+    }
+
+
+
+
+    private func nextStation() {
+
+
+        if let station = appState.stationManager.nextStation() {
+
+
+            appState.player.play(
+                station: station
+            )
+
+        }
+
+    }
+
+
+
+
+    private func previousStation() {
+
+
+        if let station = appState.stationManager.previousStation() {
+
+
+            appState.player.play(
+                station: station
+            )
+
+        }
 
     }
 
