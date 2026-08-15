@@ -36,7 +36,7 @@ final class RadioPlayer: ObservableObject {
 
         player?.play()
 
-
+        print("PLAY:", station.name)
         state = .playing
     }
 

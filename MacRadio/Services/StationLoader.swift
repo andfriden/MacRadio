@@ -31,13 +31,6 @@ final class StationLoader {
                 from: data
             )
 
-
-            print(
-                "Stations loaded:",
-                stations.count
-            )
-
-
             return stations
 
 

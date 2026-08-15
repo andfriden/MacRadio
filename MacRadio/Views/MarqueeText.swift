@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 
 struct MarqueeText: View {
@@ -20,55 +21,124 @@ struct MarqueeText: View {
 
         GeometryReader { geometry in
 
-            Text(text)
-                .lineLimit(1)
-                .fixedSize()
-                .offset(x: offset)
-                .onAppear {
-
-                    let textWidth = textWidth()
-
-                    let availableWidth = geometry.size.width
+            let textWidth = text.widthOfString(
+                usingFont: .systemFont(ofSize: 13)
+            )
 
 
-                    if textWidth > availableWidth {
+            HStack {
 
-                        offset = availableWidth
+                Text(text)
+                    .font(.system(size: 13))
+                    .lineLimit(1)
+                    .fixedSize()
 
+            }
+            .offset(x: offset)
+            .onAppear {
 
-                        withAnimation(
-                            .linear(
-                                duration: Double(textWidth / 25)
-                            )
-                            .repeatForever(
-                                autoreverses: false
-                            )
-                        ) {
+                startAnimation(
+                    textWidth: textWidth,
+                    containerWidth: geometry.size.width
+                )
 
-                            offset = -textWidth
+            }
 
-                        }
-                    }
-                }
         }
         .clipped()
     }
 
 
 
-    private func textWidth() -> CGFloat {
+    private func startAnimation(
+        textWidth: CGFloat,
+        containerWidth: CGFloat
+    ) {
+
+
+        let distance = textWidth - containerWidth
+
+
+        guard distance > 0 else {
+
+            return
+
+        }
+
+
+
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + 1.5
+        ) {
+
+
+            withAnimation(
+                .linear(
+                    duration: Double(distance) / 25
+                )
+            ) {
+
+                offset = -distance
+
+            }
+
+
+
+            DispatchQueue.main.asyncAfter(
+                deadline: .now()
+                + Double(distance) / 25
+                + 2
+            ) {
+
+
+                withAnimation(
+                    .linear(duration: 0.8)
+                ) {
+
+                    offset = 0
+
+                }
+
+
+
+                DispatchQueue.main.asyncAfter(
+                    deadline: .now() + 1
+                ) {
+
+                    startAnimation(
+                        textWidth: textWidth,
+                        containerWidth: containerWidth
+                    )
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+
+private extension String {
+
+
+    func widthOfString(
+        usingFont font: NSFont
+    ) -> CGFloat {
 
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 13)
+            .font: font
         ]
 
 
-        return (
-            text as NSString
-        )
-        .size(
-            withAttributes: attributes
-        )
-        .width
+        return (self as NSString)
+            .size(
+                withAttributes: attributes
+            )
+            .width
     }
+
 }
