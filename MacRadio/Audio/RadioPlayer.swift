@@ -13,10 +13,19 @@ final class RadioPlayer: ObservableObject {
 
 
     private var bufferObserver: AnyCancellable?
+    var onStreamFailed: (() -> Void)?
 
 
+    @Published var state: PlayerState = .idle {
+        didSet {
 
-    @Published var state: PlayerState = .idle
+            if oldValue != state {
+
+
+            }
+
+        }
+    }
 
 
     @Published var currentStation: RadioStation?
@@ -57,7 +66,31 @@ final class RadioPlayer: ObservableObject {
             item: item
         )
 
+        bufferObserver = bufferManager.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bufferState in
 
+                switch bufferState {
+
+                case .buffering:
+
+                    self?.state = .buffering
+
+
+                case .ready:
+
+                    self?.state = .playing
+
+
+                case .stalled:
+
+                    self?.state = .error(
+                        "Stream stalled"
+                    )
+                    self?.onStreamFailed?()
+                }
+
+            }
 
         bufferObserver = bufferManager.$state
             .receive(on: DispatchQueue.main)
@@ -136,9 +169,12 @@ final class RadioPlayer: ObservableObject {
 
         player = nil
 
-
         state = .idle
+        
+        bufferObserver?.cancel()
+        bufferObserver = nil
 
+        bufferManager.reset()
+        currentStation = nil
+       }
     }
-
-}
