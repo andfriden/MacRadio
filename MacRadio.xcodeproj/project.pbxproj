@@ -6,17 +6,53 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BA84C13530311C2A00F76186 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12A30311C2A00F76186 /* AppState.swift */; };
+		BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12430311C2A00F76186 /* RadioStation.swift */; };
+		BA84C13730311C2A00F76186 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11E30311C2A00F76186 /* MenuBarView.swift */; };
+		BA84C13830311C2A00F76186 /* StationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12530311C2A00F76186 /* StationManager.swift */; };
+		BA84C13930311C2A00F76186 /* MetadataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12030311C2A00F76186 /* MetadataService.swift */; };
+		BA84C13A30311C2A00F76186 /* ICYMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11A30311C2A00F76186 /* ICYMetadataReader.swift */; };
+		BA84C13B30311C2A00F76186 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12E30311C2A00F76186 /* PlayerView.swift */; };
+		BA84C13C30311C2A00F76186 /* RadioMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12130311C2A00F76186 /* RadioMetadata.swift */; };
+		BA84C13D30311C2A00F76186 /* PlayerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12330311C2A00F76186 /* PlayerState.swift */; };
+		BA84C13E30311C2A00F76186 /* RadioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11C30311C2A00F76186 /* RadioPlayer.swift */; };
+		BA84C13F30311C2A00F76186 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11B30311C2A00F76186 /* NetworkMonitor.swift */; };
+		BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C13330311C2A00F76186 /* MacRadioApp.swift */; };
+		BA84C14130311C2A00F76186 /* StationLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12B30311C2A00F76186 /* StationLoader.swift */; };
+		BA84C14230311C2A00F76186 /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12D30311C2A00F76186 /* MarqueeText.swift */; };
+		BA84C14330311C2A00F76186 /* BufferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11930311C2A00F76186 /* BufferManager.swift */; };
+		BA84C14430311C2A00F76186 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12630311C2A00F76186 /* Track.swift */; };
+		BA84C14530311C2A00F76186 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C13030311C2A00F76186 /* AppDelegate.swift */; };
+		BA84C14630311C2A00F76186 /* stations.json in Resources */ = {isa = PBXBuildFile; fileRef = BA84C12830311C2A00F76186 /* stations.json */; };
+		BA84C14730311C2A00F76186 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA84C13130311C2A00F76186 /* Assets.xcassets */; };
+		BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14930311D2400F76186 /* AppSettings.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		BA84C11930311C2A00F76186 /* BufferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferManager.swift; sourceTree = "<group>"; };
+		BA84C11A30311C2A00F76186 /* ICYMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICYMetadataReader.swift; sourceTree = "<group>"; };
+		BA84C11B30311C2A00F76186 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		BA84C11C30311C2A00F76186 /* RadioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlayer.swift; sourceTree = "<group>"; };
+		BA84C11E30311C2A00F76186 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		BA84C12030311C2A00F76186 /* MetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataService.swift; sourceTree = "<group>"; };
+		BA84C12130311C2A00F76186 /* RadioMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioMetadata.swift; sourceTree = "<group>"; };
+		BA84C12330311C2A00F76186 /* PlayerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerState.swift; sourceTree = "<group>"; };
+		BA84C12430311C2A00F76186 /* RadioStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioStation.swift; sourceTree = "<group>"; };
+		BA84C12530311C2A00F76186 /* StationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationManager.swift; sourceTree = "<group>"; };
+		BA84C12630311C2A00F76186 /* Track.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
+		BA84C12830311C2A00F76186 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stations.json; sourceTree = "<group>"; };
+		BA84C12A30311C2A00F76186 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		BA84C12B30311C2A00F76186 /* StationLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLoader.swift; sourceTree = "<group>"; };
+		BA84C12D30311C2A00F76186 /* MarqueeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeText.swift; sourceTree = "<group>"; };
+		BA84C12E30311C2A00F76186 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		BA84C13030311C2A00F76186 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BA84C13130311C2A00F76186 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BA84C13230311C2A00F76186 /* MacRadio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacRadio.entitlements; sourceTree = "<group>"; };
+		BA84C13330311C2A00F76186 /* MacRadioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRadioApp.swift; sourceTree = "<group>"; };
+		BA84C14930311D2400F76186 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		BA8A19D6302F55A300DF0174 /* MacRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		BA8A19D8302F55A300DF0174 /* MacRadio */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MacRadio;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		BA8A19D3302F55A300DF0174 /* Frameworks */ = {
@@ -29,10 +65,110 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BA84C11830311C2A00F76186 /* App */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		BA84C11D30311C2A00F76186 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C11930311C2A00F76186 /* BufferManager.swift */,
+				BA84C11A30311C2A00F76186 /* ICYMetadataReader.swift */,
+				BA84C11B30311C2A00F76186 /* NetworkMonitor.swift */,
+				BA84C11C30311C2A00F76186 /* RadioPlayer.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		BA84C11F30311C2A00F76186 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C11E30311C2A00F76186 /* MenuBarView.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		BA84C12230311C2A00F76186 /* Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C12030311C2A00F76186 /* MetadataService.swift */,
+				BA84C12130311C2A00F76186 /* RadioMetadata.swift */,
+			);
+			path = Metadata;
+			sourceTree = "<group>";
+		};
+		BA84C12730311C2A00F76186 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C12330311C2A00F76186 /* PlayerState.swift */,
+				BA84C12430311C2A00F76186 /* RadioStation.swift */,
+				BA84C12530311C2A00F76186 /* StationManager.swift */,
+				BA84C12630311C2A00F76186 /* Track.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		BA84C12930311C2A00F76186 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C12830311C2A00F76186 /* stations.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BA84C12C30311C2A00F76186 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C12A30311C2A00F76186 /* AppState.swift */,
+				BA84C12B30311C2A00F76186 /* StationLoader.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		BA84C12F30311C2A00F76186 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C12D30311C2A00F76186 /* MarqueeText.swift */,
+				BA84C12E30311C2A00F76186 /* PlayerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BA84C13430311C2A00F76186 /* MacRadio */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C14830311CBE00F76186 /* Storage */,
+				BA84C11830311C2A00F76186 /* App */,
+				BA84C11D30311C2A00F76186 /* Audio */,
+				BA84C11F30311C2A00F76186 /* MenuBar */,
+				BA84C12230311C2A00F76186 /* Metadata */,
+				BA84C12730311C2A00F76186 /* Models */,
+				BA84C12930311C2A00F76186 /* Resources */,
+				BA84C12C30311C2A00F76186 /* Services */,
+				BA84C12F30311C2A00F76186 /* Views */,
+				BA84C13030311C2A00F76186 /* AppDelegate.swift */,
+				BA84C13130311C2A00F76186 /* Assets.xcassets */,
+				BA84C13230311C2A00F76186 /* MacRadio.entitlements */,
+				BA84C13330311C2A00F76186 /* MacRadioApp.swift */,
+			);
+			path = MacRadio;
+			sourceTree = "<group>";
+		};
+		BA84C14830311CBE00F76186 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				BA84C14930311D2400F76186 /* AppSettings.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		BA8A19CD302F55A300DF0174 = {
 			isa = PBXGroup;
 			children = (
-				BA8A19D8302F55A300DF0174 /* MacRadio */,
+				BA84C13430311C2A00F76186 /* MacRadio */,
 				BA8A19D7302F55A300DF0174 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,9 +195,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				BA8A19D8302F55A300DF0174 /* MacRadio */,
 			);
 			name = MacRadio;
 			packageProductDependencies = (
@@ -109,6 +242,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA84C14630311C2A00F76186 /* stations.json in Resources */,
+				BA84C14730311C2A00F76186 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +254,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA84C13530311C2A00F76186 /* AppState.swift in Sources */,
+				BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */,
+				BA84C13730311C2A00F76186 /* MenuBarView.swift in Sources */,
+				BA84C13830311C2A00F76186 /* StationManager.swift in Sources */,
+				BA84C13930311C2A00F76186 /* MetadataService.swift in Sources */,
+				BA84C13A30311C2A00F76186 /* ICYMetadataReader.swift in Sources */,
+				BA84C13B30311C2A00F76186 /* PlayerView.swift in Sources */,
+				BA84C13C30311C2A00F76186 /* RadioMetadata.swift in Sources */,
+				BA84C13D30311C2A00F76186 /* PlayerState.swift in Sources */,
+				BA84C13E30311C2A00F76186 /* RadioPlayer.swift in Sources */,
+				BA84C13F30311C2A00F76186 /* NetworkMonitor.swift in Sources */,
+				BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */,
+				BA84C14130311C2A00F76186 /* StationLoader.swift in Sources */,
+				BA84C14230311C2A00F76186 /* MarqueeText.swift in Sources */,
+				BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */,
+				BA84C14330311C2A00F76186 /* BufferManager.swift in Sources */,
+				BA84C14430311C2A00F76186 /* Track.swift in Sources */,
+				BA84C14530311C2A00F76186 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

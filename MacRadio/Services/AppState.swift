@@ -14,7 +14,10 @@ final class AppState: ObservableObject {
 
     @Published var player = RadioPlayer()
 
-    @Published var stationManager = StationManager()
+    @Published var settings: AppSettings
+
+    @Published var stationManager: StationManager
+
 
 
     private var cancellables = Set<AnyCancellable>()
@@ -22,6 +25,18 @@ final class AppState: ObservableObject {
 
 
     init() {
+
+
+        let settings = AppSettings()
+
+
+        self.settings = settings
+
+
+        self.stationManager = StationManager(
+            settings: settings
+        )
+
 
 
         player.objectWillChange
@@ -33,6 +48,7 @@ final class AppState: ObservableObject {
             .store(
                 in: &cancellables
             )
+
 
 
         if let station = stationManager.currentStation {

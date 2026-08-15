@@ -5,6 +5,11 @@
 //  Created by Андерс Фриден on 15.08.2026.
 //
 
+//
+//  StationManager.swift
+//  MacRadio
+//
+
 import Foundation
 import Combine
 
@@ -22,11 +27,15 @@ final class StationManager: ObservableObject {
     private let loader = StationLoader()
 
 
-    private let lastStationKey = "lastStationID"
+    private let settings: AppSettings
 
 
 
-    init() {
+    init(
+        settings: AppSettings
+    ) {
+
+        self.settings = settings
 
         load()
 
@@ -76,7 +85,6 @@ final class StationManager: ObservableObject {
 
 
         currentIndex = index
-
 
         saveLastStation()
 
@@ -152,13 +160,7 @@ final class StationManager: ObservableObject {
         }
 
 
-        UserDefaults.standard.set(
-
-            station.id.uuidString,
-
-            forKey: lastStationKey
-
-        )
+        settings.lastStationID = station.id.uuidString
 
     }
 
@@ -167,13 +169,10 @@ final class StationManager: ObservableObject {
     private func restoreLastStation() {
 
 
-        guard let savedID = UserDefaults.standard.string(
+        let savedID = settings.lastStationID
 
-            forKey: lastStationKey
 
-        )
-
-        else {
+        guard !savedID.isEmpty else {
 
             return
 
