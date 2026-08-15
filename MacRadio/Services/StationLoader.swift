@@ -1,7 +1,8 @@
-
 import Foundation
 
+
 final class StationLoader {
+
 
     func load() -> [RadioStation] {
 
@@ -10,25 +11,47 @@ final class StationLoader {
             withExtension: "json"
         )
         else {
+
             print("stations.json not found")
+
             return []
+
         }
 
 
         do {
 
-            let data = try Data(contentsOf: url)
+            let data = try Data(
+                contentsOf: url
+            )
 
-            return try JSONDecoder()
-                .decode(
-                    [RadioStation].self,
-                    from: data
-                )
+
+            let stations = try JSONDecoder().decode(
+                [RadioStation].self,
+                from: data
+            )
+
+
+            print(
+                "Stations loaded:",
+                stations.count
+            )
+
+
+            return stations
+
 
         } catch {
 
-            print(error)
+            print(
+                "Station loading error:",
+                error
+            )
+
             return []
+
         }
+
     }
+
 }

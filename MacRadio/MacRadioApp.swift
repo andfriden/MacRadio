@@ -1,22 +1,15 @@
 import SwiftUI
 
-
 @main
 struct MacRadioApp: App {
 
-    @StateObject private var appState = AppState()
-
+    @NSApplicationDelegateAdaptor(AppDelegate.self)
+    private var appDelegate
 
     var body: some Scene {
 
-        MenuBarExtra(
-            "MacRadio",
-            systemImage: "radio"
-        ) {
-
-            MenuBarView()
-                .environmentObject(appState)
-
+        Settings {
+            EmptyView()
         }
 
     }

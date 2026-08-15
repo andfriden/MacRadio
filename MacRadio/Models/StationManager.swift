@@ -14,18 +14,20 @@ final class StationManager: ObservableObject {
 
     @Published var stations: [RadioStation] = []
 
+
     @Published var currentIndex: Int = 0
 
 
 
     private let loader = StationLoader()
 
+
     private let lastStationKey = "lastStationID"
 
 
 
     init() {
-       
+
         load()
 
     }
@@ -35,7 +37,7 @@ final class StationManager: ObservableObject {
     func load() {
 
         stations = loader.load()
-        
+
         restoreLastStation()
 
     }
@@ -43,7 +45,6 @@ final class StationManager: ObservableObject {
 
 
     var currentStation: RadioStation? {
-
 
         guard stations.indices.contains(currentIndex) else {
 
@@ -58,11 +59,15 @@ final class StationManager: ObservableObject {
 
 
 
-    func select(_ station: RadioStation) {
+    func select(
+        _ station: RadioStation
+    ) {
 
 
         guard let index = stations.firstIndex(where: {
+
             $0.id == station.id
+
         }) else {
 
             return
@@ -76,7 +81,6 @@ final class StationManager: ObservableObject {
         saveLastStation()
 
     }
-
 
 
 
@@ -109,6 +113,33 @@ final class StationManager: ObservableObject {
 
 
 
+    func previousStation() -> RadioStation? {
+
+
+        guard !stations.isEmpty else {
+
+            return nil
+
+        }
+
+
+        currentIndex -= 1
+
+
+        if currentIndex < 0 {
+
+            currentIndex = stations.count - 1
+
+        }
+
+
+        saveLastStation()
+
+
+        return currentStation
+
+    }
+
 
 
     private func saveLastStation() {
@@ -122,13 +153,14 @@ final class StationManager: ObservableObject {
 
 
         UserDefaults.standard.set(
+
             station.id.uuidString,
+
             forKey: lastStationKey
+
         )
 
     }
-
-
 
 
 
@@ -136,8 +168,11 @@ final class StationManager: ObservableObject {
 
 
         guard let savedID = UserDefaults.standard.string(
+
             forKey: lastStationKey
+
         )
+
         else {
 
             return
@@ -155,14 +190,8 @@ final class StationManager: ObservableObject {
 
             currentIndex = index
 
-
-            print(
-                "Restored station:",
-                stations[index].name
-            )
-
         }
 
     }
- 
+
 }

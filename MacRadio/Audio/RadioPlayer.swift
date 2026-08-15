@@ -1,85 +1,32 @@
 import Foundation
-import AVFoundation
 import Combine
+import AVFoundation
 
 
 final class RadioPlayer: ObservableObject {
 
 
-    private var player: AVPlayer?
-
-
-    private let bufferManager = BufferManager()
-
-
-    private var bufferObserver: AnyCancellable?
-    var onStreamFailed: (() -> Void)?
-
-
-    @Published var state: PlayerState = .idle
+    @Published var state: PlayerState = .stopped
 
     @Published var currentStation: RadioStation?
 
-    @Published var volume: Double = 1.0 {
 
-        didSet {
-
-            player?.volume = Float(volume)
-
-        }
-
-    }
+    private var player: AVPlayer?
 
 
 
-
-    func play(station: RadioStation) {
-
+    func play(
+        station: RadioStation
+    ) {
 
         currentStation = station
 
         state = .connecting
 
 
-        print("Starting:", station.name)
-
-
-
         let item = AVPlayerItem(
-            url: station.streamURL
+            url: station.url
         )
-
-
-
-        bufferManager.observe(
-            item: item
-        )
-
-        bufferObserver = bufferManager.$state
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] bufferState in
-
-                switch bufferState {
-
-                case .buffering:
-
-                    self?.state = .buffering
-
-
-                case .ready:
-
-                    self?.state = .playing
-
-
-                case .stalled:
-
-                    self?.state = .error(
-                        "Stream stalled"
-                    )
-                    self?.onStreamFailed?()
-                }
-
-            }
 
 
         player = AVPlayer(
@@ -87,53 +34,75 @@ final class RadioPlayer: ObservableObject {
         )
 
 
-        player?.volume = Float(volume)
-
-
         player?.play()
 
+
+        state = .playing
     }
 
+
+
+    func toggle() {
+
+        switch state {
+
+        case .playing:
+
+            pause()
+
+
+        case .paused:
+
+            resume()
+
+
+        default:
+
+            if let station = currentStation {
+
+                play(
+                    station: station
+                )
+
+            }
+        }
+    }
 
 
 
     func pause() {
 
-
         player?.pause()
 
         state = .paused
-
     }
-
 
 
 
     func resume() {
 
-
         player?.play()
 
         state = .playing
-
     }
-
 
 
 
     func stop() {
 
-
         player?.pause()
 
         player = nil
 
-        state = .idle
-        
-        bufferObserver?.cancel()
-        bufferObserver = nil
-
-        bufferManager.reset()
         currentStation = nil
-       }
+
+        state = .stopped
     }
+
+
+
+    func clearError() {
+
+        state = .stopped
+    }
+}

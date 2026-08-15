@@ -12,69 +12,18 @@ import Combine
 final class AppState: ObservableObject {
 
 
-    let player: RadioPlayer
-
-    let stationManager: StationManager
+    @Published var player = RadioPlayer()
 
 
-    private var cancellables = Set<AnyCancellable>()
+    @Published var stationManager = StationManager()
 
 
 
     init() {
 
+        if let station = stationManager.currentStation {
 
-        player = RadioPlayer()
-
-        stationManager = StationManager()
-
-
-
-        player.objectWillChange
-            .sink { [weak self] _ in
-
-                self?.objectWillChange.send()
-
-            }
-            .store(
-                in: &cancellables
-            )
-
-
-
-        setupAutoNextStation()
-
-    }
-
-
-
-    private func setupAutoNextStation() {
-
-
-        player.onStreamFailed = { [weak self] in
-
-
-            DispatchQueue.main.async {
-
-
-                guard let self else {
-                    return
-                }
-
-
-
-                if let nextStation = self.stationManager.nextStation() {
-
-
-                    self.player.play(
-                        station: nextStation
-                    )
-
-
-                }
-
-            }
-
+            player.currentStation = station
 
         }
 
