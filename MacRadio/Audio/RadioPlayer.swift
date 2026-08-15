@@ -10,27 +10,24 @@ final class RadioPlayer: ObservableObject {
 
     @Published var currentStation: RadioStation?
     
-    @Published var currentArtist: String = ""
-
-    @Published var currentTrack: String = ""
+    @Published var currentTrack: Track?
+    
+    var currentArtist: String {
+        currentTrack?.artist ?? ""
+    }
 
 
     private var player: AVPlayer?
     
-    private let metadataReader = ICYMetadataReader()
-
-
-
+   
     func play(
         station: RadioStation
     ) {
 
         currentStation = station
         
-        currentArtist = ""
-
-        currentTrack = ""
-
+        currentTrack = nil
+        
         state = .connecting
 
 
@@ -46,22 +43,7 @@ final class RadioPlayer: ObservableObject {
 
         player?.play()
         
-        metadataReader.onMetadataUpdate = { [weak self] metadata in
-                        
-            let parser = RadioMetadata()
-
-            parser.update(
-                from: metadata
-            )
-
-            self?.currentArtist = parser.artist
-
-            self?.currentTrack = parser.title
-
-        }
-
-
-        metadataReader.start(
+        metadataService.start(
             url: station.streamURL
         )
 
@@ -122,14 +104,12 @@ final class RadioPlayer: ObservableObject {
 
         player = nil
         
-        metadataReader.stop()
+        metadataService.stop()
 
         currentStation = nil
 
-        currentArtist = ""
-
-        currentTrack = ""
-
+        currentTrack = nil
+        
         state = .stopped
     }
 
@@ -138,6 +118,19 @@ final class RadioPlayer: ObservableObject {
     func clearError() {
 
         state = .stopped
+    }
+    
+    private let metadataService = MetadataService()
+
+
+    init() {
+
+        metadataService.$currentTrack
+            .receive(on: DispatchQueue.main)
+            .assign(
+                to: &$currentTrack
+            )
+
     }
 
 }
