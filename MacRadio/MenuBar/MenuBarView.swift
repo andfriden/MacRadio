@@ -124,9 +124,10 @@ struct MenuBarView: View {
                 Image(
                     systemName:
                         appState.settings.isMuted
-                    ? "speaker.slash"
-                    : "speaker.wave.2"
+                        ? "speaker.slash.fill"
+                        : "speaker.wave.2.fill"
                 )
+                .symbolRenderingMode(.hierarchical)
             }
             .buttonStyle(
                 .plain
