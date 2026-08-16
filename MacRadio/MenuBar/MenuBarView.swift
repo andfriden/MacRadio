@@ -35,16 +35,16 @@ struct MenuBarView: View {
             Divider()
 
             MenuBarStationListView()
-            
+
             Divider()
-            
+
             quitButton
         }
         .padding(12)
         .frame(width: 320)
     }
 
- 
+
     private var playbackControls: some View {
 
         HStack(spacing: 26) {
@@ -61,7 +61,6 @@ struct MenuBarView: View {
             }
 
 
-
             Button {
 
                 appState.player.toggle()
@@ -72,7 +71,9 @@ struct MenuBarView: View {
                     systemName: playPauseIcon
                 )
             }
-
+            .disabled(
+                appState.player.state == .connecting
+            )
 
 
             Button {
@@ -88,7 +89,6 @@ struct MenuBarView: View {
         }
         .font(.title3)
     }
-
 
 
     private var volumeControls: some View {
@@ -114,7 +114,6 @@ struct MenuBarView: View {
             )
 
 
-
             Slider(
                 value: $appState.settings.volume,
                 in: 0...1
@@ -122,7 +121,6 @@ struct MenuBarView: View {
             .frame(
                 width: 150
             )
-
 
 
             Text(
@@ -136,7 +134,6 @@ struct MenuBarView: View {
             )
         }
     }
-
 
 
     private var quitButton: some View {
@@ -155,7 +152,6 @@ struct MenuBarView: View {
     }
 
 
-
     private var playPauseIcon: String {
 
         switch appState.player.state {
@@ -164,12 +160,15 @@ struct MenuBarView: View {
 
             return "pause.fill"
 
+        case .connecting:
+
+            return "hourglass"
+
         default:
 
             return "play.fill"
         }
     }
-
 
 
     private func nextStation() {
@@ -183,7 +182,6 @@ struct MenuBarView: View {
             )
         }
     }
-
 
 
     private func previousStation() {
