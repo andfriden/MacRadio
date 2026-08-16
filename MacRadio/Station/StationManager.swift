@@ -218,5 +218,21 @@ final class StationManager: ObservableObject {
         hasSelectedStation = true
 
     }
+  
+    func toggleFavorite(
+        _ station: RadioStation
+    ) {
 
+        guard let index = stations.firstIndex(
+            where: {
+                $0.id == station.id
+            }
+        ) else {
+            return
+        }
+
+
+        stations[index].isFavorite.toggle()
+    }
+    
 }

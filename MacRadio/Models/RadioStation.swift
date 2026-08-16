@@ -6,8 +6,7 @@
 import Foundation
 
 
-struct RadioStation: Identifiable, Codable {
-
+struct RadioStation: Identifiable, Codable, Equatable {
 
     let id: UUID
 
@@ -19,16 +18,16 @@ struct RadioStation: Identifiable, Codable {
 
     let artworkURL: URL?
 
-
-    // Дополнительно для библиотеки
-
     let country: String?
 
     let tags: [String]?
 
+    var isFavorite: Bool
 
-    var isFavorite: Bool = false
 
+    var displayName: String {
+        name
+    }
 
 
     init(
@@ -43,22 +42,16 @@ struct RadioStation: Identifiable, Codable {
     ) {
 
         self.id = id
-
         self.name = name
-
         self.genre = genre
-
         self.streamURL = streamURL
-
         self.artworkURL = artworkURL
-
         self.country = country
-
         self.tags = tags
-
         self.isFavorite = isFavorite
-
     }
+
+
     private enum CodingKeys: String, CodingKey {
 
         case id
@@ -69,15 +62,12 @@ struct RadioStation: Identifiable, Codable {
         case country
         case tags
         case isFavorite
-
     }
-
 
 
     init(
         from decoder: Decoder
     ) throws {
-
 
         let container = try decoder.container(
             keyedBy: CodingKeys.self
@@ -130,6 +120,5 @@ struct RadioStation: Identifiable, Codable {
             Bool.self,
             forKey: .isFavorite
         ) ?? false
-
     }
 }
