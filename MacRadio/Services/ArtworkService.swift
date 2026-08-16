@@ -31,11 +31,22 @@ final class ArtworkService: ObservableObject {
 
     private var artworkCache: [String: URL] = [:]
 
+    private var imageTask: URLSessionDataTask?
+
+    private var loadID = UUID()
+
 
     init(
         session: URLSession = .shared
     ) {
+
         self.session = session
+
+
+        imageCache.countLimit = 50
+
+        imageCache.totalCostLimit =
+            50 * 1024 * 1024
     }
 
 
@@ -120,10 +131,11 @@ final class ArtworkService: ObservableObject {
             }
 
 
-            let searchResponse = try JSONDecoder().decode(
-                SearchResponse.self,
-                from: data
-            )
+            let searchResponse =
+                try JSONDecoder().decode(
+                    SearchResponse.self,
+                    from: data
+                )
 
 
             guard let artworkURL = bestMatch(
@@ -134,19 +146,22 @@ final class ArtworkService: ObservableObject {
             }
 
 
-            let highResolutionURL = makeHighResolutionURL(
-                artworkURL
-            )
+            let highResolutionURL =
+                makeHighResolutionURL(
+                    artworkURL
+                )
 
 
-            artworkCache[key] = highResolutionURL
+            artworkCache[key] =
+                highResolutionURL
+
 
             return highResolutionURL
 
         } catch {
 
             print(
-                "ARTWORK ERROR:",
+                "ARTWORK SEARCH ERROR:",
                 error
             )
 
@@ -161,6 +176,15 @@ final class ArtworkService: ObservableObject {
         from url: URL?
     ) {
 
+        imageTask?.cancel()
+
+        imageTask = nil
+
+        let currentLoadID = UUID()
+
+        loadID = currentLoadID
+
+
         guard let url else {
 
             image = nil
@@ -169,9 +193,10 @@ final class ArtworkService: ObservableObject {
         }
 
 
-        if let cachedImage = imageCache.object(
-            forKey: url as NSURL
-        ) {
+        if let cachedImage =
+            imageCache.object(
+                forKey: url as NSURL
+            ) {
 
             image = cachedImage
 
@@ -179,33 +204,59 @@ final class ArtworkService: ObservableObject {
         }
 
 
-        session.dataTask(
-            with: url
-        ) { [weak self] data, _, _ in
+        image = nil
 
-            guard
-                let data,
-                let image = NSImage(
-                    data: data
-                )
-            else {
-                return
+
+        imageTask =
+            session.dataTask(
+                with: url
+            ) { [weak self] data, _, error in
+
+                guard let self else {
+                    return
+                }
+
+
+                guard error == nil else {
+
+                    return
+                }
+
+
+                guard
+                    let data,
+                    let image = NSImage(
+                        data: data
+                    )
+                else {
+                    return
+                }
+
+
+                DispatchQueue.main.async {
+
+                    guard
+                        self.loadID == currentLoadID
+                    else {
+                        return
+                    }
+
+
+                    self.imageCache.setObject(
+                        image,
+                        forKey: url as NSURL,
+                        cost: data.count
+                    )
+
+
+                    self.image = image
+
+                    self.imageTask = nil
+                }
             }
 
 
-            DispatchQueue.main.async {
-
-                self?.imageCache.setObject(
-                    image,
-                    forKey: url as NSURL
-                )
-
-
-                self?.image = image
-            }
-
-        }
-        .resume()
+        imageTask?.resume()
     }
 
 
@@ -216,28 +267,32 @@ final class ArtworkService: ObservableObject {
         track: Track
     ) -> URL? {
 
-        let normalizedArtist = normalize(
-            track.artist
-        )
-
-        let normalizedTitle = normalize(
-            track.title
-        )
-
-
-        if let exactMatch = results.first(where: { result in
-
+        let normalizedArtist =
             normalize(
-                result.artistName ?? ""
-            ) == normalizedArtist
+                track.artist
+            )
 
-            &&
-
+        let normalizedTitle =
             normalize(
-                result.trackName ?? ""
-            ) == normalizedTitle
+                track.title
+            )
 
-        }) {
+
+        if let exactMatch =
+            results.first(
+                where: { result in
+
+                    normalize(
+                        result.artistName ?? ""
+                    ) == normalizedArtist
+
+                    &&
+
+                    normalize(
+                        result.trackName ?? ""
+                    ) == normalizedTitle
+                }
+            ) {
 
             return exactMatch.artworkUrl100
         }
@@ -251,11 +306,12 @@ final class ArtworkService: ObservableObject {
         _ url: URL
     ) -> URL {
 
-        let string = url.absoluteString
-            .replacingOccurrences(
-                of: "100x100bb",
-                with: "600x600bb"
-            )
+        let string =
+            url.absoluteString
+                .replacingOccurrences(
+                    of: "100x100bb",
+                    with: "600x600bb"
+                )
 
 
         return URL(

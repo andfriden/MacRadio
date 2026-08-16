@@ -28,6 +28,7 @@
 		BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14930311D2400F76186 /* AppSettings.swift */; };
 		BA84C14C3031417B00F76186 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14B3031417B00F76186 /* MenuBarIcon.swift */; };
 		BA84C14E3031465600F76186 /* PlayerStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14D3031465600F76186 /* PlayerStatusView.swift */; };
+		BA9563F0303263BF00245920 /* AllStationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9563EF303263BF00245920 /* AllStationsView.swift */; };
 		BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D093031D59C0003242E /* StationRowView.swift */; };
 		BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D0B3031D8AC0003242E /* StationListView.swift */; };
 		BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */; };
@@ -59,6 +60,7 @@
 		BA84C14B3031417B00F76186 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		BA84C14D3031465600F76186 /* PlayerStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStatusView.swift; sourceTree = "<group>"; };
 		BA8A19D6302F55A300DF0174 /* MacRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA9563EF303263BF00245920 /* AllStationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllStationsView.swift; sourceTree = "<group>"; };
 		BAEE4D093031D59C0003242E /* StationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationRowView.swift; sourceTree = "<group>"; };
 		BAEE4D0B3031D8AC0003242E /* StationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationListView.swift; sourceTree = "<group>"; };
 		BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStationListView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				BA84C11E30311C2A00F76186 /* MenuBarView.swift */,
 				BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */,
 				BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */,
+				BA9563EF303263BF00245920 /* AllStationsView.swift */,
 			);
 			path = MenuBar;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA9563F0303263BF00245920 /* AllStationsView.swift in Sources */,
 				BAEE4D163031EA660003242E /* ArtworkService.swift in Sources */,
 				BA84C13530311C2A00F76186 /* AppState.swift in Sources */,
 				BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */,
