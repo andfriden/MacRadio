@@ -10,8 +10,25 @@ struct MenuBarStationListView: View {
 
     @EnvironmentObject var appState: AppState
 
+    @State private var showingAllStations = false
+
 
     var body: some View {
+
+        if showingAllStations {
+
+            AllStationsView(
+                isPresented: $showingAllStations
+            )
+
+        } else {
+
+            recentStationsView
+        }
+    }
+
+
+    private var recentStationsView: some View {
 
         VStack(
             alignment: .leading,
@@ -26,8 +43,9 @@ struct MenuBarStationListView: View {
 
                 Text("No recent stations")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-
+                    .foregroundStyle(
+                        .secondary
+                    )
 
             } else {
 
@@ -39,7 +57,7 @@ struct MenuBarStationListView: View {
                         appState.stationManager.recentStations
                     ) { station in
 
-                        stationRow(
+                        recentStationRow(
                             station
                         )
                     }
@@ -47,51 +65,38 @@ struct MenuBarStationListView: View {
             }
 
 
-            Menu {
+            Button {
 
-                ForEach(
-                    appState.stationManager.stations
-                ) { station in
-
-                    Button {
-
-                        select(
-                            station
-                        )
-
-                    } label: {
-
-                        HStack {
-
-                            Image(
-                                systemName:
-                                    isCurrent(station)
-                                    ? "checkmark.circle.fill"
-                                    : "radio"
-                            )
-
-                            Text(
-                                station.name
-                            )
-                        }
-                    }
-                }
+                showingAllStations = true
 
             } label: {
 
-                Label(
-                    "All Stations",
-                    systemImage: "radio"
-                )
+                HStack {
+
+                    Text("All Stations")
+
+                    Spacer()
+
+                    Image(
+                        systemName: "chevron.right"
+                    )
+                    .foregroundStyle(
+                        .secondary
+                    )
+                }
             }
-            .menuStyle(
-                .borderlessButton
+            .buttonStyle(
+                .plain
+            )
+            .padding(
+                .top,
+                4
             )
         }
     }
 
 
-    private func stationRow(
+    private func recentStationRow(
         _ station: RadioStation
     ) -> some View {
 
