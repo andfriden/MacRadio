@@ -12,9 +12,9 @@ import Combine
 final class AppState: ObservableObject {
 
 
-    @Published var player = RadioPlayer()
-
     @Published var settings: AppSettings
+
+    @Published var player: RadioPlayer
 
     @Published var stationManager: StationManager
 
@@ -33,10 +33,19 @@ final class AppState: ObservableObject {
         self.settings = settings
 
 
-        self.stationManager = StationManager(
+        self.player = RadioPlayer(
             settings: settings
         )
 
+
+        self.stationManager = StationManager(
+            settings: settings
+        )
+        
+        print(
+            "Stations loaded:",
+            stationManager.stations.count
+        )
 
 
         player.objectWillChange
@@ -50,15 +59,24 @@ final class AppState: ObservableObject {
             )
 
 
-        if !settings.lastStationID.isEmpty {
 
-            if let station = stationManager.currentStation {
+        stationManager.objectWillChange
+            .sink { [weak self] _ in
 
-                player.play(
-                    station: station
-                )
+                self?.objectWillChange.send()
 
             }
+            .store(
+                in: &cancellables
+            )
+
+
+
+        if let station = stationManager.currentStation {
+
+
+            player.currentStation = station
+
 
         }
 

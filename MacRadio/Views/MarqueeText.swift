@@ -2,143 +2,224 @@
 //  MarqueeText.swift
 //  MacRadio
 //
-//  Created by Андерс Фриден on 15.08.2026.
-//
 
 import SwiftUI
 
 
 struct MarqueeText: View {
-    
+
+
     let text: String
-    
-    
+
+
     @State private var offset: CGFloat = 0
+
     @State private var textWidth: CGFloat = 0
+
+    @State private var containerWidth: CGFloat = 0
+
+    @State private var animationID = UUID()
     
-    
-    
+    private var needsScrolling: Bool {
+
+        textWidth > containerWidth
+
+    }
+
+
+
     var body: some View {
-        
+
+
         GeometryReader { geometry in
-            
+
+
             Text(text)
                 .font(.system(size: 13))
                 .lineLimit(1)
                 .fixedSize()
-                .offset(x: offset)
-                .background(
-                    
+                .frame(
+                    width: containerWidth,
+                    alignment: needsScrolling ? .leading : .center
+                )
+                .offset(
+                    x: needsScrolling ? offset : 0
+                )
+                .background {
+
+
                     GeometryReader { textGeometry in
-                        
+
+
                         Color.clear
                             .onAppear {
-                                
-                                textWidth = textGeometry.size.width
-                                
-                                animate(
+
+                                updateSizes(
+                                    textWidth: textGeometry.size.width,
                                     containerWidth: geometry.size.width
                                 )
-                                
+
                             }
                             .onChange(
                                 of: textGeometry.size.width
-                            ) {
-                                
-                                textWidth = textGeometry.size.width
-                                
-                                animate(
+                            ) { _, newWidth in
+
+                                updateSizes(
+                                    textWidth: newWidth,
                                     containerWidth: geometry.size.width
                                 )
-                                
+
                             }
+
                     }
-                    
-                )
-            
+
+                }
+
         }
         .clipped()
         .onChange(
             of: text
         ) {
-            
-            offset = 0
-            
+
+            resetAnimation()
+
         }
-        
+
     }
-    
-    
-    
-    private func animate(
+
+
+
+    private func updateSizes(
+        textWidth: CGFloat,
         containerWidth: CGFloat
     ) {
-        
-        let distance = textWidth - containerWidth
-        
-        
-        guard distance > 0 else {
-            
-            return
-            
-        }
-        
-        
+
+
+        self.textWidth = textWidth
+
+        self.containerWidth = containerWidth
+
+
+        startAnimation()
+
+    }
+
+
+
+    private func resetAnimation() {
+
+
+        animationID = UUID()
+
         offset = 0
-        
-        
+
+
+        DispatchQueue.main.async {
+
+            startAnimation()
+
+        }
+
+    }
+
+
+
+    private func startAnimation() {
+
+
+        let distance =
+        textWidth - containerWidth
+
+
+
+        guard distance > 0 else {
+
+            return
+
+        }
+
+
+
+        let currentID = animationID
+
+
+
         DispatchQueue.main.asyncAfter(
             deadline: .now() + 2
         ) {
-            
-            
+
+
+            guard currentID == animationID else {
+
+                return
+
+            }
+
+
+
             withAnimation(
                 .linear(
-                    duration: Double(distance) / 18
+                    duration: Double(distance) / 25
                 )
             ) {
-                
+
                 offset = -distance
-                
+
             }
-            
-            
-            
+
+
+
             DispatchQueue.main.asyncAfter(
-                deadline: .now()
-                + Double(distance) / 18
-                + 2
+                deadline:
+                    .now()
+                    + Double(distance) / 25
+                    + 2
             ) {
-                
-                
+
+
+                guard currentID == animationID else {
+
+                    return
+
+                }
+
+
+
                 withAnimation(
                     .linear(
-                        duration: Double(distance) / 18
+                        duration: Double(distance) / 25
                     )
                 ) {
-                    
+
                     offset = 0
-                    
+
                 }
-                
-                
-                
+
+
+
                 DispatchQueue.main.asyncAfter(
-                    deadline: .now()
-                    + Double(distance) / 18
-                    + 2
+                    deadline:
+                        .now()
+                        + Double(distance) / 25
+                        + 2
                 ) {
-                    
-                    
-                    animate(
-                        containerWidth: containerWidth
-                    )
-                    
+
+
+                    guard currentID == animationID else {
+
+                        return
+
+                    }
+
+
+                    startAnimation()
+
                 }
-                
+
             }
-            
+
         }
-        
+
     }
+
 }
