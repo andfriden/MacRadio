@@ -72,6 +72,17 @@ final class AppState: ObservableObject {
             )
 
 
+        settings.objectWillChange
+            .sink { [weak self] _ in
+
+                self?.objectWillChange.send()
+
+            }
+            .store(
+                in: &cancellables
+            )
+
+
         if let station =
             stationManager.currentStation {
 
