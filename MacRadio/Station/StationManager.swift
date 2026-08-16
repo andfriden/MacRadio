@@ -9,22 +9,16 @@ import Combine
 
 final class StationManager: ObservableObject {
 
-
     @Published var stations: [RadioStation] = []
 
-
     @Published var currentIndex: Int = 0
-
 
     @Published var hasSelectedStation: Bool = false
 
 
-
     private let loader = StationLoader()
 
-
     private let settings: AppSettings
-
 
 
     init(
@@ -37,9 +31,7 @@ final class StationManager: ObservableObject {
     }
 
 
-
     // MARK: - Loading
-
 
     func load() {
 
@@ -51,9 +43,7 @@ final class StationManager: ObservableObject {
     }
 
 
-
     // MARK: - Current station
-
 
     var currentStation: RadioStation? {
 
@@ -73,9 +63,19 @@ final class StationManager: ObservableObject {
     }
 
 
+    var recentStations: [RadioStation] {
+
+        settings.recentStationIDs.compactMap { id in
+
+            stations.first { station in
+
+                station.id.uuidString == id
+            }
+        }
+    }
+
 
     // MARK: - Selection
-
 
     func select(
         _ station: RadioStation
@@ -99,12 +99,14 @@ final class StationManager: ObservableObject {
 
 
         saveLastStation()
+
+        recordRecentStation(
+            station
+        )
     }
 
 
-
     // MARK: - Next / Previous
-
 
     func nextStation() -> RadioStation? {
 
@@ -133,12 +135,21 @@ final class StationManager: ObservableObject {
         hasSelectedStation = true
 
 
+        guard let station = currentStation else {
+
+            return nil
+        }
+
+
         saveLastStation()
 
+        recordRecentStation(
+            station
+        )
 
-        return currentStation
+
+        return station
     }
-
 
 
     func previousStation() -> RadioStation? {
@@ -168,16 +179,63 @@ final class StationManager: ObservableObject {
         hasSelectedStation = true
 
 
+        guard let station = currentStation else {
+
+            return nil
+        }
+
+
         saveLastStation()
 
+        recordRecentStation(
+            station
+        )
 
-        return currentStation
+
+        return station
     }
 
 
+    // MARK: - Recent Stations
+
+    func recordRecentStation(
+        _ station: RadioStation
+    ) {
+
+        let stationID =
+            station.id.uuidString
+
+
+        var recent =
+            settings.recentStationIDs
+
+
+        recent.removeAll { id in
+
+            id == stationID
+        }
+
+
+        recent.insert(
+            stationID,
+            at: 0
+        )
+
+
+        if recent.count > 3 {
+
+            recent = Array(
+                recent.prefix(3)
+            )
+        }
+
+
+        settings.recentStationIDs =
+            recent
+    }
+
 
     // MARK: - Favorites
-
 
     func toggleFavorite(
         _ station: RadioStation
@@ -202,14 +260,12 @@ final class StationManager: ObservableObject {
     }
 
 
-
     var favoriteStations: [RadioStation] {
 
         stations.filter {
             $0.isFavorite
         }
     }
-
 
 
     private func restoreFavorites() {
@@ -232,7 +288,6 @@ final class StationManager: ObservableObject {
     }
 
 
-
     private func saveFavorites() {
 
         settings.favoriteStationIDs =
@@ -246,9 +301,7 @@ final class StationManager: ObservableObject {
     }
 
 
-
     // MARK: - Persistence
-
 
     private func saveLastStation() {
 
@@ -265,7 +318,6 @@ final class StationManager: ObservableObject {
     }
 
 
-
     private func restoreLastStation() {
 
         let savedID =
@@ -278,7 +330,6 @@ final class StationManager: ObservableObject {
 
             return
         }
-
 
 
         guard let index =

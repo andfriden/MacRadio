@@ -21,8 +21,6 @@ struct PlayerStatusView: View {
             artworkView
 
             trackInfo
-
-            playerState
         }
     }
 
@@ -95,66 +93,9 @@ struct PlayerStatusView: View {
     }
 
 
-    private var playerState: some View {
-
-        HStack(spacing: 6) {
-
-            Circle()
-                .fill(stateColor)
-                .frame(
-                    width: 7,
-                    height: 7
-                )
-
-
-            Text(stateText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-
     private var currentStationName: String {
 
         player.currentStation?.name
             ?? "No station selected"
-    }
-
-
-    private var stateText: String {
-
-        switch player.state {
-
-        case .playing:
-            return "Playing"
-
-        case .paused:
-            return "Paused"
-
-        case .connecting:
-            return "Connecting..."
-
-        case .stopped:
-            return "Stopped"
-        }
-    }
-
-
-    private var stateColor: Color {
-
-        switch player.state {
-
-        case .playing:
-            return .green
-
-        case .connecting:
-            return .blue
-
-        case .paused:
-            return .gray
-
-        case .stopped:
-            return .red
-        }
     }
 }

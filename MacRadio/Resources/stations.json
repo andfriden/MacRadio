@@ -1,4 +1,3 @@
-
 [
     {
         "id": "00000000-0000-0000-0000-000000000001",
@@ -13,5 +12,191 @@
         "genre": "Chill",
         "streamURL": "https://ice2.somafm.com/groovesalad-128-aac",
         "artworkURL": "https://somafm.com/favicon.ico"
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "name": "Radio Record «Record»",
+        "genre": "Dance",
+        "streamURL": "https://radiorecord.hostingradio.ru/rr_main96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000004",
+        "name": "Radio Record «Russian Mix»",
+        "genre": "Russian Dance",
+        "streamURL": "https://radiorecord.hostingradio.ru/rus96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "russian",
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000005",
+        "name": "Radio Record «Summer Dance от Т-Банк»",
+        "genre": "Dance",
+        "streamURL": "https://radiorecord.hostingradio.ru/summerparty96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000006",
+        "name": "Radio Record «Супердискотека 90-х»",
+        "genre": "90s",
+        "streamURL": "https://radiorecord.hostingradio.ru/sd9096.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "oldschool"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000007",
+        "name": "Radio Record «Russian Hits»",
+        "genre": "Russian Hits",
+        "streamURL": "https://radiorecord.hostingradio.ru/russianhits64.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "russian",
+            "pop"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000008",
+        "name": "Radio Record «Deep»",
+        "genre": "Deep",
+        "streamURL": "https://radiorecord.hostingradio.ru/deep96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000009",
+        "name": "Radio Record «Chill-Out»",
+        "genre": "Chill-Out",
+        "streamURL": "https://radiorecord.hostingradio.ru/chil96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "chill"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000010",
+        "name": "Radio Record «Megamix»",
+        "genre": "Dance",
+        "streamURL": "https://radiorecord.hostingradio.ru/mix96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000011",
+        "name": "Radio Record «Rock»",
+        "genre": "Rock",
+        "streamURL": "https://radiorecord.hostingradio.ru/rock96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "rock"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000012",
+        "name": "Radio Record «Remix»",
+        "genre": "Remix",
+        "streamURL": "https://radiorecord.hostingradio.ru/rmx96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "house",
+            "dance"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000013",
+        "name": "Radio Record «Chill House»",
+        "genre": "Chill House",
+        "streamURL": "https://radiorecord.hostingradio.ru/chillhouse96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "chill",
+            "house"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000014",
+        "name": "Radio Record «Phonk»",
+        "genre": "Phonk",
+        "streamURL": "https://radiorecord.hostingradio.ru/phonk96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "rap/urban"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000015",
+        "name": "Radio Record «Trancemission»",
+        "genre": "Trance",
+        "streamURL": "https://radiorecord.hostingradio.ru/tm96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "trance"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000016",
+        "name": "Radio Record «Pirate Station»",
+        "genre": "Drum & Bass",
+        "streamURL": "https://radiorecord.hostingradio.ru/ps96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "drum",
+            "bass"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000017",
+        "name": "Radio Record «Rap Hits»",
+        "genre": "Rap",
+        "streamURL": "https://radiorecord.hostingradio.ru/rap96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "rap/urban"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000018",
+        "name": "Radio Record «Trance Classics»",
+        "genre": "Trance Classics",
+        "streamURL": "https://radiorecord.hostingradio.ru/trancehits96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "trance",
+            "oldschool"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000019",
+        "name": "Radio Record «Techno»",
+        "genre": "Techno",
+        "streamURL": "https://radiorecord.hostingradio.ru/techno96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "techno"
+        ]
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000020",
+        "name": "Radio Record «Ambient»",
+        "genre": "Ambient",
+        "streamURL": "https://radiorecord.hostingradio.ru/ambient96.aacp",
+        "artworkURL": "https://seeklogo.com/images/R/radio-record-logo-005AEA056F-seeklogo.com.png",
+        "tags": [
+            "chill"
+        ]
     }
 ]

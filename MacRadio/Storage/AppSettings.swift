@@ -2,13 +2,14 @@
 //  AppSettings.swift
 //  MacRadio
 //
+//  Created by Андерс Фриден on 16.08.2026.
+//
 
 import Foundation
 import Combine
 
 
 final class AppSettings: ObservableObject {
-
 
     @Published var lastStationID: String {
 
@@ -22,31 +23,16 @@ final class AppSettings: ObservableObject {
     }
 
 
-
-    @Published var volume: Double {
-
-        didSet {
-
-            UserDefaults.standard.set(
-                volume,
-                forKey: "volume"
-            )
-        }
-    }
-
-
-
-    @Published var isMuted: Bool {
+    @Published var recentStationIDs: [String] {
 
         didSet {
 
             UserDefaults.standard.set(
-                isMuted,
-                forKey: "isMuted"
+                recentStationIDs,
+                forKey: "recentStationIDs"
             )
         }
     }
-
 
 
     @Published var favoriteStationIDs: [String] {
@@ -61,38 +47,63 @@ final class AppSettings: ObservableObject {
     }
 
 
+    @Published var volume: Double {
+
+        didSet {
+
+            UserDefaults.standard.set(
+                volume,
+                forKey: "volume"
+            )
+        }
+    }
+
+
+    @Published var isMuted: Bool {
+
+        didSet {
+
+            UserDefaults.standard.set(
+                isMuted,
+                forKey: "isMuted"
+            )
+        }
+    }
+
 
     init() {
 
-
         lastStationID =
-        UserDefaults.standard.string(
-            forKey: "lastStationID"
-        )
-        ?? ""
+            UserDefaults.standard.string(
+                forKey: "lastStationID"
+            )
+            ?? ""
 
 
-
-        volume =
-        UserDefaults.standard.object(
-            forKey: "volume"
-        ) as? Double
-        ?? 1.0
-
-
-
-        isMuted =
-        UserDefaults.standard.bool(
-            forKey: "isMuted"
-        )
-
+        recentStationIDs =
+            UserDefaults.standard.stringArray(
+                forKey: "recentStationIDs"
+            )
+            ?? []
 
 
         favoriteStationIDs =
-        UserDefaults.standard.stringArray(
-            forKey: "favoriteStationIDs"
-        )
-        ?? []
+            UserDefaults.standard.stringArray(
+                forKey: "favoriteStationIDs"
+            )
+            ?? []
 
+
+        volume =
+            UserDefaults.standard.object(
+                forKey: "volume"
+            ) as? Double
+            ?? 1.0
+
+
+        isMuted =
+            UserDefaults.standard.bool(
+                forKey: "isMuted"
+            )
     }
 }
