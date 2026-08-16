@@ -9,167 +9,152 @@ import AppKit
 
 struct PlayerStatusView: View {
 
-
     @ObservedObject var player: RadioPlayer
-
 
     @ObservedObject var artworkService: ArtworkService
 
 
-
     var body: some View {
 
-
-        HStack(
-            spacing: 8
-        ) {
-
+        VStack(spacing: 10) {
 
             artworkView
 
+            trackInfo
 
-
-            contentView
-
-
+            playerState
         }
-        .frame(
-            height: 32
-        )
-
     }
-
 
 
     private var artworkView: some View {
 
-
         Group {
 
+            if let image = artworkService.image {
 
-            if let image =
-                artworkService.image {
-
-
-                Image(
-                    nsImage: image
-                )
-                .resizable()
-                .scaledToFill()
-
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFill()
 
             } else {
 
-
                 Image(
-                    systemName: "dot.radiowaves.left.and.right"
+                    systemName: "music.note"
                 )
                 .font(
-                    .system(size: 18)
+                    .system(size: 42)
                 )
-
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
             }
-
         }
         .frame(
-            width: 28,
-            height: 28
+            width: 180,
+            height: 180
+        )
+        .background(
+            Color.secondary.opacity(0.12)
         )
         .clipShape(
             RoundedRectangle(
-                cornerRadius: 5
+                cornerRadius: 12
             )
         )
-
     }
 
 
+    private var trackInfo: some View {
 
-    private var contentView: some View {
+        VStack(spacing: 3) {
 
-        Group {
-
-            switch player.state {
-
-
-            case .playing:
-
-                MarqueeText(
-                    text: currentTrackText
-                )
-                .frame(
-                    height: 18
-                )
+            Text(player.currentArtist)
+                .font(.headline)
+                .lineLimit(1)
+                .truncationMode(.tail)
 
 
-
-            case .paused:
-
-                Text(
-                    currentStationName
-                )
-                .lineLimit(
-                    1
-                )
+            Text(player.currentTitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
 
 
-
-            case .connecting:
-
-                Text(
-                    "Connecting..."
-                )
-
-
-
-            case .stopped:
-
-                Text(
-                    "Stopped"
-                )
-
-            }
-
+            Text(currentStationName)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
         }
-
+        .frame(
+            maxWidth: .infinity
+        )
     }
 
+
+    private var playerState: some View {
+
+        HStack(spacing: 6) {
+
+            Circle()
+                .fill(stateColor)
+                .frame(
+                    width: 7,
+                    height: 7
+                )
+
+
+            Text(stateText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
 
 
     private var currentStationName: String {
 
-
         player.currentStation?.name
-        ?? "MacRadio"
-
+            ?? "No station selected"
     }
 
 
+    private var stateText: String {
 
+        switch player.state {
 
-    private var currentTrackText: String {
+        case .playing:
+            return "Playing"
 
+        case .paused:
+            return "Paused"
 
-        let artist =
-            player.currentArtist
+        case .connecting:
+            return "Connecting..."
 
-
-        let title =
-            player.currentTitle
-
-
-
-        if !artist.isEmpty &&
-            !title.isEmpty {
-
-
-            return "\(artist) — \(title) • \(currentStationName)"
-
+        case .stopped:
+            return "Stopped"
         }
-
-
-        return currentStationName
-
     }
 
+
+    private var stateColor: Color {
+
+        switch player.state {
+
+        case .playing:
+            return .green
+
+        case .connecting:
+            return .blue
+
+        case .paused:
+            return .gray
+
+        case .stopped:
+            return .red
+        }
+    }
 }

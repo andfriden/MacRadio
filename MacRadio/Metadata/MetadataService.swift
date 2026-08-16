@@ -2,13 +2,6 @@
 //  MetadataService.swift
 //  MacRadio
 //
-//  Created by Андерс Фриден on 16.08.2026.
-//
-
-//
-//  MetadataService.swift
-//  MacRadio
-//
 
 import Foundation
 import Combine
@@ -16,27 +9,30 @@ import Combine
 
 final class MetadataService: ObservableObject {
 
-
     @Published var currentTrack: Track?
 
 
     private let metadataReader = ICYMetadataReader()
 
     private let parser = RadioMetadata()
-    
-    private let artworkService = ArtworkService()
+
+    private let artworkService: ArtworkService
 
     private var artworkTask: Task<Void, Never>?
 
+
+    init(
+        artworkService: ArtworkService
+    ) {
+        self.artworkService = artworkService
+    }
 
 
     func start(
         url: URL
     ) {
 
-
         metadataReader.onMetadataUpdate = { [weak self] metadata in
-
 
             guard let self else {
                 return
@@ -54,9 +50,16 @@ final class MetadataService: ObservableObject {
                 artworkURL: nil
             )
 
-            self.currentTrack = track
+
+            DispatchQueue.main.async {
+
+                self.currentTrack = track
+
+            }
+
 
             self.artworkTask?.cancel()
+
 
             self.artworkTask = Task { [weak self] in
 
@@ -64,16 +67,23 @@ final class MetadataService: ObservableObject {
                     return
                 }
 
+
                 let artworkURL = await self.artworkService.artwork(
                     for: track
                 )
-                            
+
 
                 guard !Task.isCancelled else {
                     return
                 }
 
+
                 await MainActor.run {
+
+                    self.artworkService.load(
+                        from: artworkURL
+                    )
+
 
                     self.currentTrack = Track(
                         artist: track.artist,
@@ -82,17 +92,13 @@ final class MetadataService: ObservableObject {
                     )
                 }
             }
-
         }
-
 
 
         metadataReader.start(
             url: url
         )
-
     }
-
 
 
     func stop() {
@@ -101,8 +107,14 @@ final class MetadataService: ObservableObject {
 
         parser.clear()
 
+        artworkTask?.cancel()
+
+        artworkTask = nil
+
         currentTrack = nil
 
+        artworkService.load(
+            from: nil
+        )
     }
-
 }

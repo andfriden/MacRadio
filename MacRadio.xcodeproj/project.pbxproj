@@ -20,7 +20,6 @@
 		BA84C13F30311C2A00F76186 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11B30311C2A00F76186 /* NetworkMonitor.swift */; };
 		BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C13330311C2A00F76186 /* MacRadioApp.swift */; };
 		BA84C14130311C2A00F76186 /* StationLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12B30311C2A00F76186 /* StationLoader.swift */; };
-		BA84C14230311C2A00F76186 /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12D30311C2A00F76186 /* MarqueeText.swift */; };
 		BA84C14330311C2A00F76186 /* BufferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11930311C2A00F76186 /* BufferManager.swift */; };
 		BA84C14430311C2A00F76186 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12630311C2A00F76186 /* Track.swift */; };
 		BA84C14530311C2A00F76186 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C13030311C2A00F76186 /* AppDelegate.swift */; };
@@ -51,7 +50,6 @@
 		BA84C12830311C2A00F76186 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stations.json; sourceTree = "<group>"; };
 		BA84C12A30311C2A00F76186 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		BA84C12B30311C2A00F76186 /* StationLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLoader.swift; sourceTree = "<group>"; };
-		BA84C12D30311C2A00F76186 /* MarqueeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeText.swift; sourceTree = "<group>"; };
 		BA84C12E30311C2A00F76186 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		BA84C13030311C2A00F76186 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BA84C13130311C2A00F76186 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 		BA84C12F30311C2A00F76186 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BA84C12D30311C2A00F76186 /* MarqueeText.swift */,
 				BA84C12E30311C2A00F76186 /* PlayerView.swift */,
 				BA84C14B3031417B00F76186 /* MenuBarIcon.swift */,
 				BA84C14D3031465600F76186 /* PlayerStatusView.swift */,
@@ -302,7 +299,6 @@
 				BA84C13F30311C2A00F76186 /* NetworkMonitor.swift in Sources */,
 				BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */,
 				BA84C14130311C2A00F76186 /* StationLoader.swift in Sources */,
-				BA84C14230311C2A00F76186 /* MarqueeText.swift in Sources */,
 				BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */,
 				BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */,
 				BA84C14330311C2A00F76186 /* BufferManager.swift in Sources */,

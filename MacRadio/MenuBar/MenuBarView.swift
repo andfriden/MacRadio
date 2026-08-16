@@ -15,8 +15,6 @@ struct MenuBarView: View {
 
         VStack(spacing: 12) {
 
-            header
-
             Divider()
 
             PlayerStatusView(
@@ -46,28 +44,7 @@ struct MenuBarView: View {
         .frame(width: 320)
     }
 
-
-
-    private var header: some View {
-
-        VStack(spacing: 6) {
-
-            Image(
-                systemName: "dot.radiowaves.left.and.right"
-            )
-            .font(
-                .system(size: 28)
-            )
-
-
-            Text("MacRadio")
-                .font(.title3)
-                .fontWeight(.bold)
-        }
-    }
-
-
-
+ 
     private var playbackControls: some View {
 
         HStack(spacing: 26) {
