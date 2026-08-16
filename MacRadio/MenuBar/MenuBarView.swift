@@ -31,12 +31,14 @@ struct MenuBarView: View {
 
             volumeControls
 
+            MenuBarFavoritesView()
+
             Divider()
 
             MenuBarStationListView()
-
+            
             Divider()
-
+            
             quitButton
         }
         .padding(12)

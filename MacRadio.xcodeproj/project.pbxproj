@@ -32,6 +32,7 @@
 		BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D093031D59C0003242E /* StationRowView.swift */; };
 		BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D0B3031D8AC0003242E /* StationListView.swift */; };
 		BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */; };
+		BAEE4D143031E8660003242E /* MenuBarFavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		BAEE4D093031D59C0003242E /* StationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationRowView.swift; sourceTree = "<group>"; };
 		BAEE4D0B3031D8AC0003242E /* StationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationListView.swift; sourceTree = "<group>"; };
 		BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStationListView.swift; sourceTree = "<group>"; };
+		BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarFavoritesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			children = (
 				BA84C11E30311C2A00F76186 /* MenuBarView.swift */,
 				BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */,
+				BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */,
 			);
 			path = MenuBar;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */,
 				BA84C14C3031417B00F76186 /* MenuBarIcon.swift in Sources */,
 				BA84C13D30311C2A00F76186 /* PlayerState.swift in Sources */,
+				BAEE4D143031E8660003242E /* MenuBarFavoritesView.swift in Sources */,
 				BA84C13E30311C2A00F76186 /* RadioPlayer.swift in Sources */,
 				BA84C13F30311C2A00F76186 /* NetworkMonitor.swift in Sources */,
 				BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */,
