@@ -12,12 +12,16 @@ final class StationManager: ObservableObject {
 
     @Published var stations: [RadioStation] = []
 
+
     @Published var currentIndex: Int = 0
+
 
     @Published var hasSelectedStation: Bool = false
 
 
+
     private let loader = StationLoader()
+
 
     private let settings: AppSettings
 
@@ -30,19 +34,25 @@ final class StationManager: ObservableObject {
         self.settings = settings
 
         load()
-
     }
 
+
+
+    // MARK: - Loading
 
 
     func load() {
 
         stations = loader.load()
 
-        restoreLastStation()
+        restoreFavorites()
 
+        restoreLastStation()
     }
 
+
+
+    // MARK: - Current station
 
 
     var currentStation: RadioStation? {
@@ -50,35 +60,36 @@ final class StationManager: ObservableObject {
         guard hasSelectedStation else {
 
             return nil
-
         }
 
 
         guard stations.indices.contains(currentIndex) else {
 
             return nil
-
         }
 
 
         return stations[currentIndex]
-
     }
 
+
+
+    // MARK: - Selection
 
 
     func select(
         _ station: RadioStation
     ) {
 
-        guard let index = stations.firstIndex(where: {
-
-            $0.id == station.id
-
-        }) else {
+        guard let index =
+                stations.firstIndex(
+                    where: {
+                        $0.id == station.id
+                    }
+                )
+        else {
 
             return
-
         }
 
 
@@ -86,10 +97,13 @@ final class StationManager: ObservableObject {
 
         hasSelectedStation = true
 
-        saveLastStation()
 
+        saveLastStation()
     }
 
+
+
+    // MARK: - Next / Previous
 
 
     func nextStation() -> RadioStation? {
@@ -97,7 +111,6 @@ final class StationManager: ObservableObject {
         guard !stations.isEmpty else {
 
             return nil
-
         }
 
 
@@ -113,19 +126,17 @@ final class StationManager: ObservableObject {
             if currentIndex >= stations.count {
 
                 currentIndex = 0
-
             }
-
         }
 
 
         hasSelectedStation = true
 
+
         saveLastStation()
 
 
         return currentStation
-
     }
 
 
@@ -135,7 +146,6 @@ final class StationManager: ObservableObject {
         guard !stations.isEmpty else {
 
             return nil
-
         }
 
 
@@ -151,35 +161,107 @@ final class StationManager: ObservableObject {
             if currentIndex < 0 {
 
                 currentIndex = stations.count - 1
-
             }
-
         }
 
 
         hasSelectedStation = true
 
+
         saveLastStation()
 
 
         return currentStation
-
     }
 
 
 
-    private func saveLastStation() {
+    // MARK: - Favorites
 
-        guard let station = currentStation else {
+
+    func toggleFavorite(
+        _ station: RadioStation
+    ) {
+
+        guard let index =
+                stations.firstIndex(
+                    where: {
+                        $0.id == station.id
+                    }
+                )
+        else {
 
             return
+        }
 
+
+        stations[index].isFavorite.toggle()
+
+
+        saveFavorites()
+    }
+
+
+
+    var favoriteStations: [RadioStation] {
+
+        stations.filter {
+            $0.isFavorite
+        }
+    }
+
+
+
+    private func restoreFavorites() {
+
+        let favorites =
+            Set(
+                settings.favoriteStationIDs
+            )
+
+
+        for index in stations.indices {
+
+            stations[index].isFavorite =
+                favorites.contains(
+                    stations[index]
+                        .id
+                        .uuidString
+                )
+        }
+    }
+
+
+
+    private func saveFavorites() {
+
+        settings.favoriteStationIDs =
+            stations
+                .filter {
+                    $0.isFavorite
+                }
+                .map {
+                    $0.id.uuidString
+                }
+    }
+
+
+
+    // MARK: - Persistence
+
+
+    private func saveLastStation() {
+
+        guard let station =
+                currentStation
+        else {
+
+            return
         }
 
 
         settings.lastStationID =
             station.id.uuidString
-
     }
 
 
@@ -195,44 +277,26 @@ final class StationManager: ObservableObject {
             hasSelectedStation = false
 
             return
-
         }
 
 
 
-        guard let index = stations.firstIndex(where: {
-
-            $0.id.uuidString == savedID
-
-        }) else {
+        guard let index =
+                stations.firstIndex(
+                    where: {
+                        $0.id.uuidString == savedID
+                    }
+                )
+        else {
 
             hasSelectedStation = false
 
             return
-
         }
 
 
         currentIndex = index
 
         hasSelectedStation = true
-
     }
-  
-    func toggleFavorite(
-        _ station: RadioStation
-    ) {
-
-        guard let index = stations.firstIndex(
-            where: {
-                $0.id == station.id
-            }
-        ) else {
-            return
-        }
-
-
-        stations[index].isFavorite.toggle()
-    }
-    
 }
