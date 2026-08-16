@@ -5,13 +5,13 @@
         "name": "Radio Paradise",
         "genre": "Eclectic",
         "streamURL": "https://stream.radioparadise.com/aac-320",
-        "artworkURL": null
+        "artworkURL": "https://radioparadise.com/favicon.ico"
     },
     {
         "id": "00000000-0000-0000-0000-000000000002",
         "name": "SomaFM Groove Salad",
         "genre": "Chill",
         "streamURL": "https://ice2.somafm.com/groovesalad-128-aac",
-        "artworkURL": null
+        "artworkURL": "https://somafm.com/favicon.ico"
     }
 ]

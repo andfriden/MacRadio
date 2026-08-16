@@ -20,7 +20,8 @@ struct MenuBarView: View {
             Divider()
 
             PlayerStatusView(
-                player: appState.player
+                player: appState.player,
+                artworkService: appState.artworkService
             )
 
             Divider()

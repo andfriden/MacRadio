@@ -23,6 +23,10 @@ final class MetadataService: ObservableObject {
     private let metadataReader = ICYMetadataReader()
 
     private let parser = RadioMetadata()
+    
+    private let artworkService = ArtworkService()
+
+    private var artworkTask: Task<Void, Never>?
 
 
 
@@ -44,11 +48,40 @@ final class MetadataService: ObservableObject {
             )
 
 
-            self.currentTrack = Track(
+            let track = Track(
                 artist: self.parser.artist,
                 title: self.parser.title,
                 artworkURL: nil
             )
+
+            self.currentTrack = track
+
+            self.artworkTask?.cancel()
+
+            self.artworkTask = Task { [weak self] in
+
+                guard let self else {
+                    return
+                }
+
+                let artworkURL = await self.artworkService.artwork(
+                    for: track
+                )
+                            
+
+                guard !Task.isCancelled else {
+                    return
+                }
+
+                await MainActor.run {
+
+                    self.currentTrack = Track(
+                        artist: track.artist,
+                        title: track.title,
+                        artworkURL: artworkURL
+                    )
+                }
+            }
 
         }
 

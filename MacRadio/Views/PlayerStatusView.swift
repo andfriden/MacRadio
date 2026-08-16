@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 
 struct PlayerStatusView: View {
@@ -12,29 +13,86 @@ struct PlayerStatusView: View {
     @ObservedObject var player: RadioPlayer
 
 
+    @ObservedObject var artworkService: ArtworkService
+
+
 
     var body: some View {
 
 
-        switch player.state {
+        HStack(
+            spacing: 8
+        ) {
 
 
-        case .playing:
+            artworkView
 
 
-            HStack(spacing: 6) {
+
+            contentView
+
+
+        }
+        .frame(
+            height: 32
+        )
+
+    }
+
+
+
+    private var artworkView: some View {
+
+
+        Group {
+
+
+            if let image =
+                artworkService.image {
 
 
                 Image(
-                    systemName: "play.fill"
+                    nsImage: image
                 )
-                .font(.system(size: 12))
-                .frame(
-                    width: 14,
-                    height: 14
-                )
+                .resizable()
+                .scaledToFill()
 
 
+            } else {
+
+
+                Image(
+                    systemName: "dot.radiowaves.left.and.right"
+                )
+                .font(
+                    .system(size: 18)
+                )
+
+            }
+
+        }
+        .frame(
+            width: 28,
+            height: 28
+        )
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 5
+            )
+        )
+
+    }
+
+
+
+    private var contentView: some View {
+
+        Group {
+
+            switch player.state {
+
+
+            case .playing:
 
                 MarqueeText(
                     text: currentTrackText
@@ -44,86 +102,37 @@ struct PlayerStatusView: View {
                 )
 
 
-            }
-            .frame(
-                height: 18
-            )
 
-
-
-
-
-        case .paused:
-
-
-            HStack(spacing: 6) {
-
-
-                Image(
-                    systemName: "pause.fill"
-                )
-                .font(.system(size: 12))
-
-
+            case .paused:
 
                 Text(
                     currentStationName
                 )
-                .lineLimit(1)
-
-
-            }
-
-
-
-
-
-        case .connecting:
-
-
-            HStack(spacing: 6) {
-
-
-                Image(
-                    systemName: "arrow.triangle.2.circlepath"
+                .lineLimit(
+                    1
                 )
 
+
+
+            case .connecting:
 
                 Text(
                     "Connecting..."
                 )
 
 
-            }
 
-
-
-
-
-        case .stopped:
-
-
-            HStack(spacing: 6) {
-
-
-                Image(
-                    systemName: "stop.fill"
-                )
-
+            case .stopped:
 
                 Text(
                     "Stopped"
                 )
 
-
             }
-
 
         }
 
     }
-
-
 
 
 
@@ -138,21 +147,15 @@ struct PlayerStatusView: View {
 
 
 
-
-
     private var currentTrackText: String {
 
 
         let artist =
-        player.currentArtist
+            player.currentArtist
 
 
         let title =
-        player.currentTitle
-
-
-        let station =
-        currentStationName
+            player.currentTitle
 
 
 
@@ -160,15 +163,13 @@ struct PlayerStatusView: View {
             !title.isEmpty {
 
 
-            return "\(artist) — \(title)  •  \(station)"
+            return "\(artist) — \(title) • \(currentStationName)"
 
         }
 
 
-
-        return station
+        return currentStationName
 
     }
-
 
 }
