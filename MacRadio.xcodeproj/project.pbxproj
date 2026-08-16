@@ -33,6 +33,7 @@
 		BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D0B3031D8AC0003242E /* StationListView.swift */; };
 		BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */; };
 		BAEE4D143031E8660003242E /* MenuBarFavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */; };
+		BAEE4D163031EA660003242E /* ArtworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D153031EA660003242E /* ArtworkService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		BAEE4D0B3031D8AC0003242E /* StationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationListView.swift; sourceTree = "<group>"; };
 		BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStationListView.swift; sourceTree = "<group>"; };
 		BAEE4D133031E8660003242E /* MenuBarFavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarFavoritesView.swift; sourceTree = "<group>"; };
+		BAEE4D153031EA660003242E /* ArtworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 			children = (
 				BA84C12A30311C2A00F76186 /* AppState.swift */,
 				BA84C12B30311C2A00F76186 /* StationLoader.swift */,
+				BAEE4D153031EA660003242E /* ArtworkService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAEE4D163031EA660003242E /* ArtworkService.swift in Sources */,
 				BA84C13530311C2A00F76186 /* AppState.swift in Sources */,
 				BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */,
 				BA84C13730311C2A00F76186 /* MenuBarView.swift in Sources */,

@@ -8,75 +8,118 @@ import SwiftUI
 
 struct MenuBarStationListView: View {
 
+
     @EnvironmentObject var appState: AppState
 
 
 
     var body: some View {
 
+
         VStack(
             alignment: .leading,
             spacing: 6
         ) {
 
+
             Text("Stations")
-                .font(
-                    .headline
-                )
+                .font(.headline)
 
 
 
             ScrollView {
 
+
                 VStack(
                     spacing: 4
                 ) {
+
 
                     ForEach(
                         appState.stationManager.stations
                     ) { station in
 
 
-                        Button {
+                        HStack {
 
-                            select(
-                                station
+
+                            Button {
+
+
+                                select(
+                                    station
+                                )
+
+
+                            } label: {
+
+
+                                HStack {
+
+
+                                    Image(
+                                        systemName:
+                                            isCurrent(station)
+                                            ? "checkmark.circle.fill"
+                                            : "radio"
+                                    )
+
+
+
+                                    Text(
+                                        station.name
+                                    )
+                                    .lineLimit(
+                                        1
+                                    )
+
+                                }
+                            }
+                            .buttonStyle(
+                                .plain
                             )
 
 
-                        } label: {
+
+                            Spacer()
 
 
-                            HStack {
+
+                            Button {
+
+
+                                appState.stationManager.toggleFavorite(
+                                    station
+                                )
+
+
+                            } label: {
 
 
                                 Image(
                                     systemName:
-                                        isCurrent(station)
-                                        ? "checkmark.circle.fill"
-                                        : "radio"
+                                        station.isFavorite
+                                        ? "star.fill"
+                                        : "star"
                                 )
-
-
-
-                                Text(
-                                    station.name
-                                )
-                                .lineLimit(
-                                    1
-                                )
-
-
-
-                                Spacer()
 
                             }
+                            .buttonStyle(
+                                .plain
+                            )
+                            .help(
+                                station.isFavorite
+                                ? "Remove from favorites"
+                                : "Add to favorites"
+                            )
+
+
                         }
-                        .buttonStyle(
-                            .plain
-                        )
+
                     }
+
                 }
+
             }
             .frame(
                 maxHeight: 180
@@ -89,6 +132,7 @@ struct MenuBarStationListView: View {
     private func select(
         _ station: RadioStation
     ) {
+
 
         appState.stationManager.select(
             station
@@ -105,6 +149,7 @@ struct MenuBarStationListView: View {
     private func isCurrent(
         _ station: RadioStation
     ) -> Bool {
+
 
         appState.player.currentStation?.id ==
         station.id
