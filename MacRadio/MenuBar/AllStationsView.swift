@@ -17,12 +17,11 @@ struct AllStationsView: View {
 
     private var filteredStations: [RadioStation] {
 
-        let query =
-            searchText
-                .trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                )
-                .lowercased()
+        let query = searchText
+            .trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+            .lowercased()
 
 
         guard !query.isEmpty else {
@@ -33,11 +32,11 @@ struct AllStationsView: View {
 
         return appState.stationManager.stations.filter { station in
 
-            let name =
-                station.name.lowercased()
+            let name = station.name.lowercased()
 
             let genre =
-                station.genre?.lowercased() ?? ""
+                station.genre?.lowercased()
+                ?? ""
 
             let tags =
                 station.tags?
@@ -97,6 +96,7 @@ struct AllStationsView: View {
             .buttonStyle(
                 .plain
             )
+            .help("Back")
 
 
             Text("All Stations")
@@ -145,6 +145,9 @@ struct AllStationsView: View {
                         .foregroundStyle(
                             .secondary
                         )
+                        .frame(
+                            maxWidth: .infinity
+                        )
                         .padding(
                             .top,
                             20
@@ -185,10 +188,29 @@ struct AllStationsView: View {
                         spacing: 2
                     ) {
 
-                        Text(
-                            station.name
-                        )
-                        .lineLimit(1)
+                        HStack(
+                            spacing: 5
+                        ) {
+
+                            if isCurrent(
+                                station
+                            ) {
+
+                                Image(
+                                    systemName:
+                                        "checkmark.circle.fill"
+                                )
+                                .foregroundStyle(
+                                    .secondary
+                                )
+                            }
+
+
+                            Text(
+                                station.name
+                            )
+                            .lineLimit(1)
+                        }
 
 
                         if let genre = station.genre {
@@ -285,7 +307,8 @@ struct AllStationsView: View {
     private var stationPlaceholder: some View {
 
         Image(
-            systemName: "dot.radiowaves.left.and.right"
+            systemName:
+                "dot.radiowaves.left.and.right"
         )
         .frame(
             width: 32,
@@ -293,6 +316,11 @@ struct AllStationsView: View {
         )
         .background(
             Color.secondary.opacity(0.12)
+        )
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 6
+            )
         )
     }
 
@@ -312,5 +340,13 @@ struct AllStationsView: View {
 
 
         isPresented = false
+    }
+
+
+    private func isCurrent(
+        _ station: RadioStation
+    ) -> Bool {
+
+        appState.player.currentStation?.id == station.id
     }
 }
