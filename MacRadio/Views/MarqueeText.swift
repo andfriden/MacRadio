@@ -13,18 +13,10 @@ struct MarqueeText: View {
 
 
     @State private var offset: CGFloat = 0
-
     @State private var textWidth: CGFloat = 0
-
     @State private var containerWidth: CGFloat = 0
 
     @State private var animationID = UUID()
-    
-    private var needsScrolling: Bool {
-
-        textWidth > containerWidth
-
-    }
 
 
 
@@ -38,15 +30,8 @@ struct MarqueeText: View {
                 .font(.system(size: 13))
                 .lineLimit(1)
                 .fixedSize()
-                .frame(
-                    width: containerWidth,
-                    alignment: needsScrolling ? .leading : .center
-                )
-                .offset(
-                    x: needsScrolling ? offset : 0
-                )
-                .background {
-
+                .offset(x: offset)
+                .background(
 
                     GeometryReader { textGeometry in
 
@@ -54,26 +39,38 @@ struct MarqueeText: View {
                         Color.clear
                             .onAppear {
 
-                                updateSizes(
-                                    textWidth: textGeometry.size.width,
-                                    containerWidth: geometry.size.width
+
+                                updateSize(
+                                    textSize:
+                                        textGeometry.size.width,
+                                    container:
+                                        geometry.size.width
                                 )
 
+
                             }
+
+
                             .onChange(
                                 of: textGeometry.size.width
-                            ) { _, newWidth in
+                            ) {
 
-                                updateSizes(
-                                    textWidth: newWidth,
-                                    containerWidth: geometry.size.width
+
+                                updateSize(
+                                    textSize:
+                                        textGeometry.size.width,
+                                    container:
+                                        geometry.size.width
                                 )
 
+
                             }
+
 
                     }
 
-                }
+                )
+
 
         }
         .clipped()
@@ -81,50 +78,66 @@ struct MarqueeText: View {
             of: text
         ) {
 
-            resetAnimation()
+
+            offset = 0
+
+            animationID = UUID()
+
+
+            DispatchQueue.main.async {
+
+
+                startAnimation(
+                    id: animationID
+                )
+
+
+            }
 
         }
+        .onDisappear {
+
+
+            animationID = UUID()
+
+        }
+
 
     }
 
 
 
-    private func updateSizes(
-        textWidth: CGFloat,
-        containerWidth: CGFloat
+
+
+
+
+    private func updateSize(
+        textSize: CGFloat,
+        container: CGFloat
     ) {
 
 
-        self.textWidth = textWidth
+        textWidth = textSize
 
-        self.containerWidth = containerWidth
-
-
-        startAnimation()
-
-    }
+        containerWidth = container
 
 
-
-    private func resetAnimation() {
-
-
-        animationID = UUID()
-
-        offset = 0
-
-
-        DispatchQueue.main.async {
-
-            startAnimation()
-
-        }
+        startAnimation(
+            id: animationID
+        )
 
     }
 
 
 
-    private func startAnimation() {
+
+
+
+
+
+    private func startAnimation(
+        id: UUID
+    ) {
 
 
         let distance =
@@ -134,13 +147,15 @@ struct MarqueeText: View {
 
         guard distance > 0 else {
 
+            offset = 0
+
             return
 
         }
 
 
 
-        let currentID = animationID
+        offset = 0
 
 
 
@@ -149,7 +164,7 @@ struct MarqueeText: View {
         ) {
 
 
-            guard currentID == animationID else {
+            guard id == animationID else {
 
                 return
 
@@ -159,9 +174,11 @@ struct MarqueeText: View {
 
             withAnimation(
                 .linear(
-                    duration: Double(distance) / 25
+                    duration:
+                        Double(distance) / 18
                 )
             ) {
+
 
                 offset = -distance
 
@@ -172,12 +189,14 @@ struct MarqueeText: View {
             DispatchQueue.main.asyncAfter(
                 deadline:
                     .now()
-                    + Double(distance) / 25
-                    + 2
+                    +
+                    Double(distance) / 18
+                    +
+                    2
             ) {
 
 
-                guard currentID == animationID else {
+                guard id == animationID else {
 
                     return
 
@@ -187,9 +206,11 @@ struct MarqueeText: View {
 
                 withAnimation(
                     .linear(
-                        duration: Double(distance) / 25
+                        duration:
+                            Double(distance) / 18
                     )
                 ) {
+
 
                     offset = 0
 
@@ -200,26 +221,32 @@ struct MarqueeText: View {
                 DispatchQueue.main.asyncAfter(
                     deadline:
                         .now()
-                        + Double(distance) / 25
-                        + 2
+                        +
+                        Double(distance) / 18
+                        +
+                        2
                 ) {
 
 
-                    guard currentID == animationID else {
+                    guard id == animationID else {
 
                         return
 
                     }
 
 
-                    startAnimation()
+                    startAnimation(
+                        id: id
+                    )
 
                 }
+
 
             }
 
         }
 
     }
+
 
 }

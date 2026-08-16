@@ -24,31 +24,43 @@ struct MenuBarView: View {
             Divider()
 
 
-            playerStatus
+
+            PlayerStatusView(
+                player: appState.player
+            )
+
 
 
             Divider()
+
 
 
             playbackControls
 
 
+
             Divider()
+
 
 
             volumeControls
 
 
+
             Divider()
+
 
 
             stationsList
 
 
+
             Divider()
 
 
+
             quitButton
+
 
         }
         .padding(12)
@@ -58,7 +70,11 @@ struct MenuBarView: View {
 
 
 
+
+
+
     private var header: some View {
+
 
         VStack(spacing: 6) {
 
@@ -67,7 +83,6 @@ struct MenuBarView: View {
                 systemName: "dot.radiowaves.left.and.right"
             )
             .font(.system(size: 28))
-            .foregroundStyle(.primary)
 
 
 
@@ -75,70 +90,12 @@ struct MenuBarView: View {
                 .font(.title3)
                 .fontWeight(.bold)
 
-        }
-
-    }
-
-
-
-
-    @ViewBuilder
-    private var playerStatus: some View {
-
-
-        switch appState.player.state {
-
-
-        case .playing:
-
-
-            HStack(spacing: 6) {
-
-
-                Image(
-                    systemName: "play.fill"
-                )
-                .font(.system(size: 12))
-
-
-                MarqueeText(
-                    text: currentTrackText
-                )
-
-            }
-            .frame(height: 18)
-
-
-
-        case .paused:
-
-
-            Text(
-                "⏸ \(currentStationName)"
-            )
-            .lineLimit(1)
-
-
-
-        case .connecting:
-
-
-            Text(
-                "🔵 Connecting..."
-            )
-
-
-
-        case .stopped:
-
-
-            Text(
-                "⏹ Stopped"
-            )
 
         }
 
     }
+
+
 
 
 
@@ -169,6 +126,8 @@ struct MenuBarView: View {
 
 
 
+
+
             Button {
 
 
@@ -183,6 +142,7 @@ struct MenuBarView: View {
                 )
 
             }
+
 
 
 
@@ -214,6 +174,8 @@ struct MenuBarView: View {
 
 
 
+
+
     private var volumeControls: some View {
 
 
@@ -232,12 +194,21 @@ struct MenuBarView: View {
                 Image(
                     systemName:
                         appState.settings.isMuted
-                        ? "speaker.slash.fill"
-                        : "speaker.wave.2.fill"
+                        ? "speaker.slash"
+                        : "speaker.wave.2"
                 )
+
 
             }
             .buttonStyle(.plain)
+            .help(
+                appState.settings.isMuted
+                ? "Unmute"
+                : "Mute"
+            )
+
+
+
 
 
 
@@ -246,14 +217,26 @@ struct MenuBarView: View {
                 value: $appState.settings.volume,
                 in: 0...1
             )
-
-
-
-
-            Image(
-                systemName: "speaker.wave.3.fill"
+            .frame(
+                width: 150
             )
-            .font(.system(size: 12))
+
+
+
+
+
+
+
+            Text(
+                "\(Int(appState.settings.volume * 100))%"
+            )
+            .font(.caption)
+            .monospacedDigit()
+            .frame(
+                width: 35,
+                alignment: .trailing
+            )
+
 
         }
 
@@ -265,14 +248,21 @@ struct MenuBarView: View {
 
 
 
+
+
     private var stationsList: some View {
 
 
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(
+            alignment: .leading,
+            spacing: 6
+        ) {
 
 
             Text("Stations")
                 .font(.headline)
+
+
 
 
 
@@ -294,6 +284,7 @@ struct MenuBarView: View {
                             appState.stationManager.select(
                                 station
                             )
+
 
 
                             appState.player.play(
@@ -329,6 +320,7 @@ struct MenuBarView: View {
 
                             }
 
+
                         }
                         .buttonStyle(.plain)
 
@@ -344,9 +336,13 @@ struct MenuBarView: View {
                 maxHeight: 180
             )
 
+
         }
 
     }
+
+
+
 
 
 
@@ -370,54 +366,13 @@ struct MenuBarView: View {
                 systemImage: "xmark.circle"
             )
 
-        }
-
-    }
-
-
-
-
-
-
-
-    private var currentStationName: String {
-
-
-        appState.player.currentStation?.name
-        ?? "MacRadio"
-
-    }
-
-
-
-
-
-
-    private var currentTrackText: String {
-
-
-        let artist =
-        appState.player.currentArtist
-
-
-        let title =
-        appState.player.currentTitle
-
-
-
-        if !artist.isEmpty &&
-            !title.isEmpty {
-
-
-            return "\(artist) — \(title)"
 
         }
 
-
-
-        return currentStationName
-
     }
+
+
+
 
 
 
@@ -449,6 +404,9 @@ struct MenuBarView: View {
 
 
 
+
+
+
     private func isCurrent(
         _ station: RadioStation
     ) -> Bool {
@@ -458,6 +416,9 @@ struct MenuBarView: View {
         station.id
 
     }
+
+
+
 
 
 
@@ -479,6 +440,9 @@ struct MenuBarView: View {
         }
 
     }
+
+
+
 
 
 

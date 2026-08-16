@@ -7,6 +7,7 @@
 
 import Cocoa
 import SwiftUI
+import Combine
 
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -16,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var popover: NSPopover!
 
     private let appState = AppState()
+    
+    private var cancellable: AnyCancellable?
 
 
 
@@ -24,6 +27,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenuBar()
 
         setupPopover()
+
+        observePlayerState()
 
     }
 
@@ -99,8 +104,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     }
 
+    private func observePlayerState() {
 
 
+        cancellable =
+        appState.player.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+
+                self?.updateMenuBarIcon()
+
+            }
+
+    }
+     
+    private var iconColor: NSColor {
+
+
+        switch appState.player.state {
+
+
+        case .playing:
+
+            return .systemGreen
+
+
+
+        case .connecting:
+
+            return .systemBlue
+
+
+
+        case .paused,
+             .stopped:
+
+            return .labelColor
+
+        }
+
+    }
+    
     private func updateMenuBarIcon() {
 
         guard let button = statusItem.button,
@@ -118,8 +162,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         coloredImage.lockFocus()
 
 
-        NSColor.systemGreen.setFill()
-
+        iconColor.setFill()
+        
+        
 
         let rect = NSRect(
             origin: .zero,
