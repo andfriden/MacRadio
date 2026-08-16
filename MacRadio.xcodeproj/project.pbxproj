@@ -31,6 +31,7 @@
 		BA84C14E3031465600F76186 /* PlayerStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14D3031465600F76186 /* PlayerStatusView.swift */; };
 		BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D093031D59C0003242E /* StationRowView.swift */; };
 		BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D0B3031D8AC0003242E /* StationListView.swift */; };
+		BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		BA8A19D6302F55A300DF0174 /* MacRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAEE4D093031D59C0003242E /* StationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationRowView.swift; sourceTree = "<group>"; };
 		BAEE4D0B3031D8AC0003242E /* StationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationListView.swift; sourceTree = "<group>"; };
+		BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStationListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				BA84C11E30311C2A00F76186 /* MenuBarView.swift */,
+				BAEE4D113031DFB60003242E /* MenuBarStationListView.swift */,
 			);
 			path = MenuBar;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				BA84C13830311C2A00F76186 /* StationManager.swift in Sources */,
 				BA84C13930311C2A00F76186 /* MetadataService.swift in Sources */,
 				BA84C14E3031465600F76186 /* PlayerStatusView.swift in Sources */,
+				BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */,
 				BA84C13A30311C2A00F76186 /* ICYMetadataReader.swift in Sources */,
 				BA84C13B30311C2A00F76186 /* PlayerView.swift in Sources */,
 				BA84C13C30311C2A00F76186 /* RadioMetadata.swift in Sources */,
