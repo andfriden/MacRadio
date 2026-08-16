@@ -68,24 +68,53 @@ struct PlayerStatusView: View {
 
         VStack(spacing: 3) {
 
-            Text(player.currentArtist)
+            if player.state == .connecting {
+
+                Text(
+                    "Connecting…"
+                )
+                .font(.headline)
+
+            } else if player.state == .playing ||
+                      player.state == .paused {
+
+                Text(
+                    player.currentArtist.isEmpty
+                    ? "Unknown Artist"
+                    : player.currentArtist
+                )
                 .font(.headline)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
 
-            Text(player.currentTitle)
+                Text(
+                    player.currentTitle.isEmpty
+                    ? "Unknown Track"
+                    : player.currentTitle
+                )
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
 
-            Text(currentStationName)
+                Text(
+                    currentStationName
+                )
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .truncationMode(.tail)
+
+            } else {
+
+                Text(
+                    "No station selected"
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
         }
         .frame(
             maxWidth: .infinity
