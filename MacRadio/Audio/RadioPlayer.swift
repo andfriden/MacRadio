@@ -182,6 +182,22 @@ final class RadioPlayer: ObservableObject {
     }
 
 
+    func retry() {
+
+        guard let station = currentStation else {
+
+            state = .stopped
+
+            return
+        }
+
+
+        play(
+            station: station
+        )
+    }
+
+
     func toggle() {
 
         switch state {
@@ -194,6 +210,11 @@ final class RadioPlayer: ObservableObject {
         case .paused:
 
             resume()
+
+
+        case .failed:
+
+            retry()
 
 
         default:
