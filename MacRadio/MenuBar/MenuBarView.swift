@@ -45,6 +45,9 @@ struct MenuBarView: View {
     }
 
 
+    // MARK: - Playback Controls
+
+
     private var playbackControls: some View {
 
         HStack(spacing: 26) {
@@ -72,7 +75,7 @@ struct MenuBarView: View {
                 )
             }
             .disabled(
-                appState.player.state == .connecting
+                isPlayerBusy
             )
 
 
@@ -89,6 +92,30 @@ struct MenuBarView: View {
         }
         .font(.title3)
     }
+
+
+    private var isPlayerBusy: Bool {
+
+        switch appState.player.state {
+
+        case .connecting,
+             .buffering,
+             .reconnecting:
+
+            return true
+
+
+        case .stopped,
+             .playing,
+             .paused,
+             .failed:
+
+            return false
+        }
+    }
+
+
+    // MARK: - Volume Controls
 
 
     private var volumeControls: some View {
@@ -136,6 +163,9 @@ struct MenuBarView: View {
     }
 
 
+    // MARK: - Quit
+
+
     private var quitButton: some View {
 
         Button {
@@ -152,6 +182,9 @@ struct MenuBarView: View {
     }
 
 
+    // MARK: - Play / Pause Icon
+
+
     private var playPauseIcon: String {
 
         switch appState.player.state {
@@ -160,15 +193,32 @@ struct MenuBarView: View {
 
             return "pause.fill"
 
-        case .connecting:
+
+        case .connecting,
+             .buffering:
 
             return "hourglass"
 
-        default:
+
+        case .reconnecting:
+
+            return "arrow.clockwise"
+
+
+        case .failed:
+
+            return "exclamationmark.triangle"
+
+
+        case .paused,
+             .stopped:
 
             return "play.fill"
         }
     }
+
+
+    // MARK: - Stations
 
 
     private func nextStation() {

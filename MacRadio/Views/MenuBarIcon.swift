@@ -10,13 +10,10 @@ import SwiftUI
 
 struct MenuBarIcon: View {
 
-
     let state: PlayerState
 
 
-
     var body: some View {
-
 
         Image(
             systemName: "dot.radiowaves.left.and.right"
@@ -25,36 +22,34 @@ struct MenuBarIcon: View {
         .foregroundStyle(
             color
         )
-
     }
-
 
 
     private var color: Color {
 
-
         switch state {
-
 
         case .playing:
 
             return .green
 
 
-
-        case .connecting:
+        case .connecting,
+             .buffering,
+             .reconnecting:
 
             return .blue
 
+
+        case .failed:
+
+            return .red
 
 
         case .paused,
              .stopped:
 
             return .gray
-
         }
-
     }
-
 }

@@ -304,9 +304,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return .systemGreen
 
 
-        case .connecting:
+        case .connecting,
+             .buffering,
+             .reconnecting:
 
             return .systemBlue
+
+
+        case .failed:
+
+            return .systemRed
 
 
         case .paused,
