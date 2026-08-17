@@ -18,30 +18,89 @@ final class AppState: ObservableObject {
     @Published var artworkService: ArtworkService
 
 
+    let mediaCommandService: MediaCommandService
+
+
     private var cancellables = Set<AnyCancellable>()
 
 
     init() {
 
-        let settings = AppSettings()
-
-        let artworkService = ArtworkService()
-
-
-        self.settings = settings
-
-        self.artworkService = artworkService
+        let settings =
+            AppSettings()
 
 
-        self.player = RadioPlayer(
-            settings: settings,
-            artworkService: artworkService
-        )
+        let artworkService =
+            ArtworkService()
 
 
-        self.stationManager = StationManager(
-            settings: settings
-        )
+        let stationManager =
+            StationManager(
+                settings: settings
+            )
+
+
+        let player =
+            RadioPlayer(
+                settings: settings,
+                artworkService: artworkService
+            )
+
+
+        self.settings =
+            settings
+
+        self.artworkService =
+            artworkService
+
+        self.stationManager =
+            stationManager
+
+        self.player =
+            player
+
+
+        self.mediaCommandService =
+            MediaCommandService(
+                player: player,
+                artworkService: artworkService,
+                nextStation: {
+                    [weak player, weak stationManager] in
+
+                    guard
+                        let player,
+                        let stationManager,
+                        let station =
+                            stationManager.nextStation()
+                    else {
+
+                        return
+                    }
+
+
+                    player.play(
+                        station: station
+                    )
+                },
+                previousStation: {
+                    [weak player, weak stationManager] in
+
+                    guard
+                        let player,
+                        let stationManager,
+                        let station =
+                            stationManager.previousStation()
+                    else {
+
+                        return
+                    }
+
+
+                    player.play(
+                        station: station
+                    )
+                }
+            )
 
 
         print(
@@ -54,7 +113,6 @@ final class AppState: ObservableObject {
             .sink { [weak self] _ in
 
                 self?.objectWillChange.send()
-
             }
             .store(
                 in: &cancellables
@@ -65,7 +123,6 @@ final class AppState: ObservableObject {
             .sink { [weak self] _ in
 
                 self?.objectWillChange.send()
-
             }
             .store(
                 in: &cancellables
@@ -76,7 +133,6 @@ final class AppState: ObservableObject {
             .sink { [weak self] _ in
 
                 self?.objectWillChange.send()
-
             }
             .store(
                 in: &cancellables
@@ -84,9 +140,14 @@ final class AppState: ObservableObject {
 
 
         if let station =
-            stationManager.currentStation {
+            stationManager.currentStation
+        {
 
-            player.currentStation = station
+            player.currentStation =
+                station
         }
+
+
+        mediaCommandService.start()
     }
 }
