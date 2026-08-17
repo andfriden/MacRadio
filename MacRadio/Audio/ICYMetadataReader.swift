@@ -21,10 +21,11 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
     private var buffer = Data()
 
 
-
     var onMetadataUpdate: ((String) -> Void)?
 
 
+
+    // MARK: - Start
 
     func start(
         url: URL
@@ -48,26 +49,30 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         )
 
 
-        let configuration = URLSessionConfiguration.default
+        let configuration =
+            URLSessionConfiguration.default
 
 
-        session = URLSession(
-            configuration: configuration,
-            delegate: self,
-            delegateQueue: OperationQueue()
-        )
+        session =
+            URLSession(
+                configuration: configuration,
+                delegate: self,
+                delegateQueue: OperationQueue()
+            )
 
 
-        task = session?.dataTask(
-            with: request
-        )
+        task =
+            session?.dataTask(
+                with: request
+            )
 
 
         task?.resume()
-
     }
 
 
+
+    // MARK: - Stop
 
     func stop() {
 
@@ -75,38 +80,45 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
 
         session?.invalidateAndCancel()
 
+
         task = nil
 
         session = nil
 
-        buffer.removeAll()
 
+        metadataInterval = 0
+
+        buffer.removeAll()
     }
 
 
+
+    // MARK: - URLSession
 
     func urlSession(
         _ session: URLSession,
         dataTask: URLSessionDataTask,
         didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+        completionHandler: @escaping (
+            URLSession.ResponseDisposition
+        ) -> Void
     ) {
 
+        if let response =
+            response as? HTTPURLResponse {
 
-        if let response = response as? HTTPURLResponse {
+            if let value =
+                response.allHeaderFields["icy-metaint"] as? String {
 
-
-            if let value = response.allHeaderFields["icy-metaint"] as? String {
-
-                metadataInterval = Int(value) ?? 0
-
+                metadataInterval =
+                    Int(value) ?? 0
             }
-
         }
 
 
-        completionHandler(.allow)
-
+        completionHandler(
+            .allow
+        )
     }
 
 
@@ -117,138 +129,149 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         didReceive data: Data
     ) {
 
+        buffer.append(
+            data
+        )
 
-        buffer.append(data)
 
         processBuffer()
-
     }
 
 
+
+    // MARK: - Buffer Processing
 
     private func processBuffer() {
 
-
         while true {
 
-
             guard metadataInterval > 0 else {
-
                 return
-
             }
 
 
-            guard buffer.count >= metadataInterval else {
-
+            guard
+                buffer.count >= metadataInterval + 1
+            else {
                 return
-
             }
 
 
-
-            buffer.removeFirst(
-                metadataInterval
-            )
-
-
-
-            guard !buffer.isEmpty else {
-
-                return
-
-            }
-
-
-
-            let lengthByte = Int(
-                buffer.removeFirst()
-            )
-
-
-            let metadataLength = lengthByte * 16
-
-
-
-            guard buffer.count >= metadataLength else {
-
-                return
-
-            }
-
-
-
-            let metadataData = buffer.prefix(
-                metadataLength
-            )
-
-
-            buffer.removeFirst(
-                metadataLength
-            )
-
-
-
-            if let metadata = String(
-                data: metadataData,
-                encoding: .utf8
-            ) {
-
-
-                parse(
-                    metadata
+            let lengthByte =
+                Int(
+                    buffer[
+                        buffer.startIndex
+                            .advanced(
+                                by: metadataInterval
+                            )
+                    ]
                 )
 
+
+            let metadataLength =
+                lengthByte * 16
+
+
+            let totalLength =
+                metadataInterval
+                + 1
+                + metadataLength
+
+
+            guard
+                buffer.count >= totalLength
+            else {
+                return
             }
 
-        }
 
+            if metadataLength > 0 {
+
+                let metadataData =
+                    Data(
+                        buffer[
+                            buffer.startIndex
+                                .advanced(
+                                    by: metadataInterval + 1
+                                )
+                            ..<
+                            buffer.startIndex
+                                .advanced(
+                                    by: totalLength
+                                )
+                        ]
+                    )
+
+
+                if let metadata =
+                    String(
+                        data: metadataData,
+                        encoding: .utf8
+                    ) {
+
+                    parse(
+                        metadata
+                    )
+                }
+            }
+
+
+            buffer.removeFirst(
+                totalLength
+            )
+        }
     }
 
 
+
+    // MARK: - Metadata Parsing
 
     private func parse(
         _ text: String
     ) {
 
-
-        guard let range = text.range(
-            of: "StreamTitle='"
-        )
+        guard
+            let range =
+                text.range(
+                    of: "StreamTitle='"
+                )
         else {
-
             return
-
         }
 
 
-
-        let value = text[
-            range.upperBound...
-        ]
-
-
-
-        if let end = value.firstIndex(
-            of: "'"
-        ) {
+        let value =
+            text[
+                range.upperBound...
+            ]
 
 
-            let title = String(
+        guard
+            let end =
+                value.firstIndex(
+                    of: "'"
+                )
+        else {
+            return
+        }
+
+
+        let title =
+            String(
                 value[..<end]
             )
 
 
-            DispatchQueue.main.async { [weak self] in
-
-                self?.onMetadataUpdate?(
-                    title
-                )
-
-            }
-
+        guard !title.isEmpty else {
+            return
         }
 
-    }
 
+        DispatchQueue.main.async { [weak self] in
+
+            self?.onMetadataUpdate?(
+                title
+            )
+        }
+    }
 }

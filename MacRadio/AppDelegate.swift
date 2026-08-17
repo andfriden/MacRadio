@@ -312,7 +312,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .paused,
              .stopped:
 
-            return .labelColor
+            return .white
         }
     }
 

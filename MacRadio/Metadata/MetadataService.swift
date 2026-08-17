@@ -20,6 +20,8 @@ final class MetadataService: ObservableObject {
 
     private var artworkTask: Task<Void, Never>?
 
+    private var artworkRequestID = UUID()
+
 
     init(
         artworkService: ArtworkService
@@ -27,6 +29,8 @@ final class MetadataService: ObservableObject {
         self.artworkService = artworkService
     }
 
+
+    // MARK: - Start
 
     func start(
         url: URL
@@ -44,21 +48,38 @@ final class MetadataService: ObservableObject {
             )
 
 
-            let track = Track(
-                artist: self.parser.artist,
-                title: self.parser.title,
-                artworkURL: nil
-            )
+            guard let track = self.validTrack() else {
+                return
+            }
 
 
-            DispatchQueue.main.async {
+            if let currentTrack = self.currentTrack,
+               currentTrack.artist == track.artist,
+               currentTrack.title == track.title {
 
-                self.currentTrack = track
-
+                return
             }
 
 
             self.artworkTask?.cancel()
+
+
+            let requestID = UUID()
+
+            self.artworkRequestID = requestID
+
+
+            DispatchQueue.main.async {
+
+                guard
+                    self.artworkRequestID == requestID
+                else {
+                    return
+                }
+
+
+                self.currentTrack = track
+            }
 
 
             self.artworkTask = Task { [weak self] in
@@ -68,9 +89,10 @@ final class MetadataService: ObservableObject {
                 }
 
 
-                let artworkURL = await self.artworkService.artwork(
-                    for: track
-                )
+                let artworkURL =
+                    await self.artworkService.artwork(
+                        for: track
+                    )
 
 
                 guard !Task.isCancelled else {
@@ -79,6 +101,13 @@ final class MetadataService: ObservableObject {
 
 
                 await MainActor.run {
+
+                    guard
+                        self.artworkRequestID == requestID
+                    else {
+                        return
+                    }
+
 
                     self.artworkService.load(
                         from: artworkURL
@@ -101,20 +130,104 @@ final class MetadataService: ObservableObject {
     }
 
 
+
+    // MARK: - Stop
+
     func stop() {
 
         metadataReader.stop()
 
         parser.clear()
 
+
         artworkTask?.cancel()
 
         artworkTask = nil
 
+
+        artworkRequestID = UUID()
+
+
         currentTrack = nil
+
 
         artworkService.load(
             from: nil
         )
+    }
+
+
+
+    // MARK: - Track Validation
+
+    private func validTrack() -> Track? {
+
+        let artist =
+            parser.artist
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
+
+
+        let title =
+            parser.title
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
+
+
+        guard !artist.isEmpty else {
+            return nil
+        }
+
+
+        guard !title.isEmpty else {
+            return nil
+        }
+
+
+        guard !isPlaceholder(title) else {
+            return nil
+        }
+
+
+        return Track(
+            artist: artist,
+            title: title,
+            artworkURL: nil
+        )
+    }
+
+
+
+    private func isPlaceholder(
+        _ value: String
+    ) -> Bool {
+
+        let normalized =
+            value
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
+                .lowercased()
+
+
+        switch normalized {
+
+        case "-",
+             "—",
+             "–",
+             "n/a",
+             "na",
+             "unknown",
+             "unk",
+             "none":
+
+            return true
+
+        default:
+
+            return false
+        }
     }
 }
