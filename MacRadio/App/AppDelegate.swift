@@ -14,7 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var popover: NSPopover!
 
-    private let appState = AppState()
+    let appState = AppState.shared
 
     private var cancellable: AnyCancellable?
 

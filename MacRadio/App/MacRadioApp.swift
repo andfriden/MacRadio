@@ -9,19 +9,18 @@ import SwiftUI
 @main
 struct MacRadioApp: App {
 
-
     @NSApplicationDelegateAdaptor(AppDelegate.self)
     private var appDelegate
 
 
-
     var body: some Scene {
-
 
         Settings {
 
-            EmptyView()
-
+            SettingsView()
+                .environmentObject(
+                    appDelegate.appState
+                )
         }
     }
 }

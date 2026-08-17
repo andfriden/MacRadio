@@ -9,6 +9,9 @@ import Combine
 
 final class AppState: ObservableObject {
 
+    static let shared = AppState()
+
+
     @Published var settings: AppSettings
 
     @Published var player: RadioPlayer
@@ -20,11 +23,13 @@ final class AppState: ObservableObject {
 
     let mediaCommandService: MediaCommandService
 
+    let notificationService: NotificationService
+
 
     private var cancellables = Set<AnyCancellable>()
 
 
-    init() {
+    private init() {
 
         let settings =
             AppSettings()
@@ -103,6 +108,13 @@ final class AppState: ObservableObject {
             )
 
 
+        self.notificationService =
+            NotificationService(
+                player: player,
+                settings: settings
+            )
+
+
         print(
             "Stations loaded:",
             stationManager.stations.count
@@ -149,5 +161,7 @@ final class AppState: ObservableObject {
 
 
         mediaCommandService.start()
+
+        notificationService.start()
     }
 }

@@ -11,6 +11,8 @@
 		BA70987D3033346600946EBA /* RadioPlayer+Volume.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA70987C3033346600946EBA /* RadioPlayer+Volume.swift */; };
 		BA70987F3033348100946EBA /* RadioPlayer+Recovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA70987E3033348100946EBA /* RadioPlayer+Recovery.swift */; };
 		BA70988C3033484200946EBA /* MediaCommandService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA70988B3033484200946EBA /* MediaCommandService.swift */; };
+		BA70988E30334E7200946EBA /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA70988D30334E7200946EBA /* NotificationService.swift */; };
+		BA7098903033631000946EBA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA70988F3033631000946EBA /* SettingsView.swift */; };
 		BA84C13530311C2A00F76186 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12A30311C2A00F76186 /* AppState.swift */; };
 		BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C12430311C2A00F76186 /* RadioStation.swift */; };
 		BA84C13730311C2A00F76186 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C11E30311C2A00F76186 /* MenuBarView.swift */; };
@@ -43,6 +45,8 @@
 		BA70987C3033346600946EBA /* RadioPlayer+Volume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RadioPlayer+Volume.swift"; sourceTree = "<group>"; };
 		BA70987E3033348100946EBA /* RadioPlayer+Recovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RadioPlayer+Recovery.swift"; sourceTree = "<group>"; };
 		BA70988B3033484200946EBA /* MediaCommandService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCommandService.swift; sourceTree = "<group>"; };
+		BA70988D30334E7200946EBA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		BA70988F3033631000946EBA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BA84C11A30311C2A00F76186 /* ICYMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICYMetadataReader.swift; sourceTree = "<group>"; };
 		BA84C11B30311C2A00F76186 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		BA84C11C30311C2A00F76186 /* RadioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlayer.swift; sourceTree = "<group>"; };
@@ -113,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				BA84C14930311D2400F76186 /* AppSettings.swift */,
+				BA70988F3033631000946EBA /* SettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -153,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				BA70988B3033484200946EBA /* MediaCommandService.swift */,
+				BA70988D30334E7200946EBA /* NotificationService.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -213,7 +219,6 @@
 				BA70988430333C1300946EBA /* Artwork */,
 				BA70988330333C0200946EBA /* Network */,
 				BA70988230333B7000946EBA /* App */,
-				BA84C14830311CBE00F76186 /* Storage */,
 				BA84C11D30311C2A00F76186 /* Audio */,
 				BA84C12230311C2A00F76186 /* Metadata */,
 				BA84C12730311C2A00F76186 /* Models */,
@@ -223,13 +228,6 @@
 				BA84C13230311C2A00F76186 /* MacRadio.entitlements */,
 			);
 			path = MacRadio;
-			sourceTree = "<group>";
-		};
-		BA84C14830311CBE00F76186 /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Storage;
 			sourceTree = "<group>";
 		};
 		BA8A19CD302F55A300DF0174 = {
@@ -326,10 +324,12 @@
 				BA84C13530311C2A00F76186 /* AppState.swift in Sources */,
 				BA84C13630311C2A00F76186 /* RadioStation.swift in Sources */,
 				BA84C13730311C2A00F76186 /* MenuBarView.swift in Sources */,
+				BA7098903033631000946EBA /* SettingsView.swift in Sources */,
 				BA84C13830311C2A00F76186 /* StationManager.swift in Sources */,
 				BA84C13930311C2A00F76186 /* MetadataService.swift in Sources */,
 				BA84C14E3031465600F76186 /* PlayerStatusView.swift in Sources */,
 				BAEE4D123031DFB60003242E /* MenuBarStationListView.swift in Sources */,
+				BA70988E30334E7200946EBA /* NotificationService.swift in Sources */,
 				BA70987F3033348100946EBA /* RadioPlayer+Recovery.swift in Sources */,
 				BA84C13A30311C2A00F76186 /* ICYMetadataReader.swift in Sources */,
 				BA84C13B30311C2A00F76186 /* PlayerView.swift in Sources */,

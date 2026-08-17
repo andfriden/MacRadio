@@ -71,6 +71,18 @@ final class AppSettings: ObservableObject {
     }
 
 
+    @Published var notificationsEnabled: Bool {
+
+        didSet {
+
+            UserDefaults.standard.set(
+                notificationsEnabled,
+                forKey: "notificationsEnabled"
+            )
+        }
+    }
+
+
     init() {
 
         lastStationID =
@@ -105,5 +117,20 @@ final class AppSettings: ObservableObject {
             UserDefaults.standard.bool(
                 forKey: "isMuted"
             )
+
+
+        if UserDefaults.standard.object(
+            forKey: "notificationsEnabled"
+        ) == nil {
+
+            notificationsEnabled = true
+
+        } else {
+
+            notificationsEnabled =
+                UserDefaults.standard.bool(
+                    forKey: "notificationsEnabled"
+                )
+        }
     }
 }
