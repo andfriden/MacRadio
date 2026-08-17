@@ -24,8 +24,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var shouldResumeAfterSystemPause = false
 
-    private var systemPauseInProgress = false
-
 
     func applicationDidFinishLaunching(
         _ notification: Notification
@@ -96,8 +94,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc
     private func togglePopover() {
 
-        guard let button = statusItem.button
-        else {
+        guard let button = statusItem.button else {
+
             return
         }
 
@@ -125,21 +123,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         cancellable =
             appState.player.$state
                 .receive(on: DispatchQueue.main)
-                .sink { [weak self] state in
+                .sink { [weak self] _ in
 
-                    guard let self else {
-                        return
-                    }
-
-
-                    if state == .paused &&
-                       !systemPauseInProgress {
-
-                        shouldResumeAfterSystemPause = false
-                    }
-
-
-                    updateMenuBarIcon()
+                    self?.updateMenuBarIcon()
                 }
     }
 
@@ -255,26 +241,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func handleSystemPause() {
 
-        guard appState.player.state == .playing
-        else {
+        guard !shouldResumeAfterSystemPause else {
+
+            return
+        }
+
+
+        guard appState.player.state == .playing else {
+
             return
         }
 
 
         shouldResumeAfterSystemPause = true
 
-        systemPauseInProgress = true
-
         appState.player.pause()
-
-        systemPauseInProgress = false
     }
 
 
     private func handleSystemResume() {
 
-        guard shouldResumeAfterSystemPause
-        else {
+        guard shouldResumeAfterSystemPause else {
+
             return
         }
 
@@ -282,13 +270,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shouldResumeAfterSystemPause = false
 
 
-        guard appState.player.state == .paused
-        else {
+        guard appState.player.state == .paused else {
+
             return
         }
 
 
-        appState.player.resume()
+        appState.player.resumeAfterSystemPause()
     }
 
 
@@ -332,6 +320,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     named: "MacRadioSignal"
                 )
         else {
+
             return
         }
 

@@ -165,6 +165,79 @@ extension RadioPlayer {
     }
 
 
+    func resumeAfterSystemPause() {
+
+        guard let station = currentStation else {
+
+            state = .stopped
+
+            return
+        }
+
+
+        cancelReconnect()
+
+        cancelStallDetection()
+
+        reconnectAttempts = 0
+
+
+        resetPlayerObservers()
+
+        player?.pause()
+
+        player = nil
+
+        playerItem = nil
+
+
+        metadataService.stop()
+
+        currentTrack = nil
+
+        state = .connecting
+
+
+        let item = AVPlayerItem(
+            url: station.streamURL
+        )
+
+
+        playerItem = item
+
+
+        let newPlayer = AVPlayer(
+            playerItem: item
+        )
+
+
+        player = newPlayer
+
+
+        observe(
+            player: newPlayer,
+            item: item
+        )
+
+
+        applyVolume()
+
+
+        metadataService.start(
+            url: station.streamURL
+        )
+
+
+        newPlayer.play()
+
+
+        print(
+            "PLAYER SYSTEM RESUME:",
+            station.name
+        )
+    }
+
+
     func stop() {
 
         cancelReconnect()
