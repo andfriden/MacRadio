@@ -14,13 +14,17 @@ final class ArtworkService: ObservableObject {
 
 
     private struct SearchResponse: Decodable {
+
         let results: [Result]
     }
 
 
     private struct Result: Decodable {
+
         let artistName: String?
+
         let trackName: String?
+
         let artworkUrl100: URL?
     }
 
@@ -52,32 +56,55 @@ final class ArtworkService: ObservableObject {
 
     // MARK: - Artwork Search
 
+
     func artwork(
         for track: Track
     ) async -> URL? {
 
-        let key = cacheKey(
-            artist: track.artist,
-            title: track.title
-        )
+        let artist =
+            track.artist
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
 
 
-        if let cachedURL = artworkCache[key] {
-            return cachedURL
-        }
+        let title =
+            track.title
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
 
 
-        guard
-            !track.artist.isEmpty,
-            !track.title.isEmpty
+        guard !artist.isEmpty,
+              !title.isEmpty
         else {
+
             return nil
         }
 
 
-        guard var components = URLComponents(
-            string: "https://itunes.apple.com/search"
-        ) else {
+        let key =
+            cacheKey(
+                artist: artist,
+                title: title
+            )
+
+
+        if let cachedURL =
+            artworkCache[key]
+        {
+
+            return cachedURL
+        }
+
+
+        guard var components =
+            URLComponents(
+                string:
+                    "https://itunes.apple.com/search"
+            )
+        else {
+
             return nil
         }
 
@@ -86,7 +113,8 @@ final class ArtworkService: ObservableObject {
 
             URLQueryItem(
                 name: "term",
-                value: "\(track.artist) \(track.title)"
+                value:
+                    "\(artist) \(title)"
             ),
 
             URLQueryItem(
@@ -111,22 +139,29 @@ final class ArtworkService: ObservableObject {
         ]
 
 
-        guard let url = components.url else {
+        guard let url =
+            components.url
+        else {
+
             return nil
         }
 
 
         do {
 
-            let (data, response) = try await session.data(
-                from: url
-            )
+            let (data, response) =
+                try await session.data(
+                    from: url
+                )
 
 
             guard
-                let httpResponse = response as? HTTPURLResponse,
-                200..<300 ~= httpResponse.statusCode
+                let httpResponse =
+                    response as? HTTPURLResponse,
+                200..<300 ~=
+                    httpResponse.statusCode
             else {
+
                 return nil
             }
 
@@ -138,10 +173,15 @@ final class ArtworkService: ObservableObject {
                 )
 
 
-            guard let artworkURL = bestMatch(
-                results: searchResponse.results,
-                track: track
-            ) else {
+            guard let artworkURL =
+                bestMatch(
+                    results:
+                        searchResponse.results,
+                    artist: artist,
+                    title: title
+                )
+            else {
+
                 return nil
             }
 
@@ -160,10 +200,19 @@ final class ArtworkService: ObservableObject {
 
         } catch {
 
+            guard !isCancellationError(
+                error
+            ) else {
+
+                return nil
+            }
+
+
             print(
                 "ARTWORK SEARCH ERROR:",
                 error
             )
+
 
             return nil
         }
@@ -171,6 +220,7 @@ final class ArtworkService: ObservableObject {
 
 
     // MARK: - Image Loading
+
 
     func load(
         from url: URL?
@@ -180,9 +230,13 @@ final class ArtworkService: ObservableObject {
 
         imageTask = nil
 
-        let currentLoadID = UUID()
 
-        loadID = currentLoadID
+        let currentLoadID =
+            UUID()
+
+
+        loadID =
+            currentLoadID
 
 
         guard let url else {
@@ -195,8 +249,10 @@ final class ArtworkService: ObservableObject {
 
         if let cachedImage =
             imageCache.object(
-                forKey: url as NSURL
-            ) {
+                forKey:
+                    url as NSURL
+            )
+        {
 
             image = cachedImage
 
@@ -210,9 +266,10 @@ final class ArtworkService: ObservableObject {
         imageTask =
             session.dataTask(
                 with: url
-            ) { [weak self] data, _, error in
+            ) { [weak self] data, response, error in
 
                 guard let self else {
+
                     return
                 }
 
@@ -224,11 +281,24 @@ final class ArtworkService: ObservableObject {
 
 
                 guard
-                    let data,
-                    let image = NSImage(
-                        data: data
-                    )
+                    let response =
+                        response as? HTTPURLResponse,
+                    200..<300 ~=
+                        response.statusCode
                 else {
+
+                    return
+                }
+
+
+                guard
+                    let data,
+                    let image =
+                        NSImage(
+                            data: data
+                        )
+                else {
+
                     return
                 }
 
@@ -236,22 +306,29 @@ final class ArtworkService: ObservableObject {
                 DispatchQueue.main.async {
 
                     guard
-                        self.loadID == currentLoadID
+                        self.loadID ==
+                            currentLoadID
                     else {
+
                         return
                     }
 
 
                     self.imageCache.setObject(
                         image,
-                        forKey: url as NSURL,
-                        cost: data.count
+                        forKey:
+                            url as NSURL,
+                        cost:
+                            data.count
                     )
 
 
-                    self.image = image
+                    self.image =
+                        image
 
-                    self.imageTask = nil
+
+                    self.imageTask =
+                        nil
                 }
             }
 
@@ -262,19 +339,22 @@ final class ArtworkService: ObservableObject {
 
     // MARK: - Search Helpers
 
+
     private func bestMatch(
         results: [Result],
-        track: Track
+        artist: String,
+        title: String
     ) -> URL? {
 
         let normalizedArtist =
             normalize(
-                track.artist
+                artist
             )
+
 
         let normalizedTitle =
             normalize(
-                track.title
+                title
             )
 
 
@@ -285,20 +365,23 @@ final class ArtworkService: ObservableObject {
                     normalize(
                         result.artistName ?? ""
                     ) == normalizedArtist
-
                     &&
-
                     normalize(
                         result.trackName ?? ""
                     ) == normalizedTitle
                 }
-            ) {
+            )
+        {
 
             return exactMatch.artworkUrl100
         }
 
 
-        return results.first?.artworkUrl100
+        return results
+            .compactMap {
+                $0.artworkUrl100
+            }
+            .first
     }
 
 
@@ -336,12 +419,33 @@ final class ArtworkService: ObservableObject {
         value
             .lowercased()
             .trimmingCharacters(
-                in: .whitespacesAndNewlines
+                in:
+                    .whitespacesAndNewlines
             )
             .replacingOccurrences(
                 of: "\\s+",
                 with: " ",
-                options: .regularExpression
+                options:
+                    .regularExpression
             )
+    }
+
+
+    private func isCancellationError(
+        _ error: Error
+    ) -> Bool {
+
+        if
+            let urlError =
+                error as? URLError,
+            urlError.code ==
+                .cancelled
+        {
+
+            return true
+        }
+
+
+        return false
     }
 }
