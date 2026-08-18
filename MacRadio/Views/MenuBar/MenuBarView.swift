@@ -49,46 +49,32 @@ struct MenuBarView: View {
 
 
     private var playbackControls: some View {
-
         HStack(spacing: 26) {
 
             Button {
-
                 previousStation()
-
             } label: {
-
-                Image(
-                    systemName: "backward.fill"
-                )
+                Image(systemName: "backward.fill")
+                    .frame(width: 24, height: 24)
             }
-
+            .buttonStyle(.plain)
 
             Button {
-
                 appState.player.toggle()
-
             } label: {
-
-                Image(
-                    systemName: playPauseIcon
-                )
+                Image(systemName: playPauseIcon)
+                    .frame(width: 24, height: 24)
             }
-            .disabled(
-                isPlayerBusy
-            )
-
+            .buttonStyle(.plain)
+            .disabled(isPlayerBusy)
 
             Button {
-
                 nextStation()
-
             } label: {
-
-                Image(
-                    systemName: "forward.fill"
-                )
+                Image(systemName: "forward.fill")
+                    .frame(width: 24, height: 24)
             }
+            .buttonStyle(.plain)
         }
         .font(.title3)
     }

@@ -10,7 +10,6 @@ import AppKit
 struct PlayerStatusView: View {
 
     @ObservedObject var player: RadioPlayer
-
     @ObservedObject var artworkService: ArtworkService
 
 
@@ -26,7 +25,6 @@ struct PlayerStatusView: View {
 
 
     // MARK: - Artwork
-
 
     private var artworkView: some View {
 
@@ -71,7 +69,6 @@ struct PlayerStatusView: View {
 
     // MARK: - Track Info
 
-
     private var trackInfo: some View {
 
         VStack(spacing: 3) {
@@ -84,13 +81,11 @@ struct PlayerStatusView: View {
                     "Connecting…"
                 )
 
-
             case .buffering:
 
                 statusText(
                     "Buffering…"
                 )
-
 
             case .reconnecting:
 
@@ -98,19 +93,16 @@ struct PlayerStatusView: View {
                     "Reconnecting…"
                 )
 
-
             case .failed:
 
                 statusText(
                     "Playback error"
                 )
 
-
             case .playing,
                  .paused:
 
                 trackDetails
-
 
             case .stopped:
 
@@ -122,8 +114,13 @@ struct PlayerStatusView: View {
         .frame(
             maxWidth: .infinity
         )
+        .frame(
+            height: 52
+        )
     }
 
+
+    // MARK: - Track Details
 
     private var trackDetails: some View {
 
@@ -144,7 +141,6 @@ struct PlayerStatusView: View {
                 .tail
             )
 
-
             Text(
                 player.currentTitle.isEmpty
                 ? "Unknown Track"
@@ -162,7 +158,6 @@ struct PlayerStatusView: View {
             .truncationMode(
                 .tail
             )
-
 
             Text(
                 currentStationName
@@ -183,6 +178,8 @@ struct PlayerStatusView: View {
     }
 
 
+    // MARK: - Status
+
     private func statusText(
         _ text: String
     ) -> some View {
@@ -196,9 +193,11 @@ struct PlayerStatusView: View {
     }
 
 
+    // MARK: - Current Station
+
     private var currentStationName: String {
 
         player.currentStation?.name
-            ?? "No station selected"
+        ?? "No station selected"
     }
 }
