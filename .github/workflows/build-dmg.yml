@@ -23,38 +23,54 @@ jobs:
           xcodebuild -version
           xcode-select -p
 
-      - name: Build Release archive
+      - name: Build Universal Release archive
         run: |
           rm -rf build
+
           xcodebuild \
             -project MacRadio.xcodeproj \
             -scheme MacRadio \
             -configuration Release \
             -archivePath build/MacRadio.xcarchive \
+            ARCHS="arm64 x86_64" \
+            ONLY_ACTIVE_ARCH=NO \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             archive
 
+      - name: Verify Universal binary
+        run: |
+          lipo -info \
+            build/MacRadio.xcarchive/Products/Applications/MacRadio.app/Contents/MacOS/MacRadio
+
       - name: Prepare application
         run: |
+          rm -rf build/dmg
           mkdir -p build/dmg
-          cp -R build/MacRadio.xcarchive/Products/Applications/MacRadio.app build/dmg/MacRadio.app
+
+          cp -R \
+            build/MacRadio.xcarchive/Products/Applications/MacRadio.app \
+            build/dmg/MacRadio.app
+
           ln -s /Applications build/dmg/Applications
 
       - name: Create DMG
         run: |
           VERSION="${GITHUB_REF_NAME}"
+
           if [[ "$VERSION" == v* ]]; then
             DMG_NAME="MacRadio-${VERSION}.dmg"
           else
             DMG_NAME="MacRadio-${GITHUB_SHA::7}.dmg"
           fi
+
           hdiutil create \
             -volname "MacRadio" \
             -srcfolder build/dmg \
             -ov \
             -format UDZO \
             "build/${DMG_NAME}"
+
           echo "DMG_NAME=${DMG_NAME}" >> "$GITHUB_ENV"
 
       - name: Verify DMG
