@@ -20,16 +20,31 @@ struct AddStationView: View {
 
     private var canAddStation: Bool {
 
-        !name.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        ).isEmpty
-        &&
-        URL(
-            string:
-                streamURL.trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                )
-        ) != nil
+        let trimmedName =
+            name.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+
+        let trimmedURL =
+            streamURL.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+
+        guard
+            !trimmedName.isEmpty,
+            let url = URL(
+                string: trimmedURL
+            ),
+            let scheme = url.scheme,
+            let host = url.host
+        else {
+            return false
+        }
+
+        return
+            (scheme == "http" || scheme == "https")
+            &&
+            !host.isEmpty
     }
 
 
@@ -57,17 +72,26 @@ struct AddStationView: View {
                     "Name",
                     text: $name
                 )
+                .help(
+                    "Station name"
+                )
 
 
                 TextField(
                     "Stream URL",
                     text: $streamURL
                 )
+                .help(
+                    "Radio stream URL"
+                )
 
 
                 TextField(
                     "Logo URL (Optional)",
                     text: $logoURL
+                )
+                .help(
+                    "Optional station logo URL"
                 )
             }
 
