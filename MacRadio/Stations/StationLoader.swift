@@ -19,11 +19,13 @@ final class StationLoader {
 
     func load() -> [RadioStation] {
 
+        let url = userStationsURL
+
         if fileManager.fileExists(
-            atPath: userStationsURL.path
+            atPath: url.path
         ) {
             return loadUserStations(
-                from: userStationsURL
+                from: url
             )
         }
 
@@ -33,13 +35,14 @@ final class StationLoader {
 
     func resetToDefaults() -> [RadioStation] {
 
-        guard let bundledStations = loadBundledStations() else {
+        guard let defaultStations = loadBundledStations() else {
             return []
         }
 
-        let userStations = bundledStations.map(
-            makeUserStation
-        )
+        let userStations =
+            makeUserStations(
+                from: defaultStations
+            )
 
         do {
 
@@ -58,21 +61,23 @@ final class StationLoader {
                 error
             )
 
-            return bundledStations
+            return defaultStations
         }
     }
 
 
     func openStationsFile() {
 
+        let url = userStationsURL
+
         if !fileManager.fileExists(
-            atPath: userStationsURL.path
+            atPath: url.path
         ) {
             _ = createUserStationsFromDefaults()
         }
 
         NSWorkspace.shared.open(
-            userStationsURL
+            url
         )
     }
 
@@ -85,9 +90,10 @@ final class StationLoader {
 
         do {
 
-            let data = try Data(
-                contentsOf: url
-            )
+            let data =
+                try Data(
+                    contentsOf: url
+                )
 
             let decodedStations =
                 try JSONDecoder().decode(
@@ -95,29 +101,41 @@ final class StationLoader {
                     from: data
                 )
 
-            var didNormalize = false
+            var normalizedStations: [UserStation] = []
 
-            let normalizedStations =
-                decodedStations.map { station in
+            normalizedStations.reserveCapacity(
+                decodedStations.count
+            )
 
-                    guard station.id == nil else {
-                        return station
-                    }
+            var didChangeFile = false
 
-                    didNormalize = true
+            for station in decodedStations {
 
-                    return UserStation(
-                        id: UUID(),
-                        name: station.name,
-                        genre: station.genre,
-                        streamURL: station.streamURL,
-                        artworkURL: station.artworkURL,
-                        country: station.country,
-                        tags: station.tags
+                if station.id != nil {
+
+                    normalizedStations.append(
+                        station
                     )
-                }
 
-            if didNormalize {
+                } else {
+
+                    normalizedStations.append(
+                        UserStation(
+                            id: UUID(),
+                            name: station.name,
+                            genre: station.genre,
+                            streamURL: station.streamURL,
+                            artworkURL: station.artworkURL,
+                            country: station.country,
+                            tags: station.tags
+                        )
+                    )
+
+                    didChangeFile = true
+                }
+            }
+
+            if didChangeFile {
 
                 try saveUserStations(
                     normalizedStations
@@ -167,15 +185,13 @@ final class StationLoader {
         -> [RadioStation]
     {
 
-        guard let bundledStations =
-            loadBundledStations()
-        else {
+        guard let bundledStations = loadBundledStations() else {
             return []
         }
 
         let userStations =
-            bundledStations.map(
-                makeUserStation
+            makeUserStations(
+                from: bundledStations
             )
 
         do {
@@ -216,9 +232,10 @@ final class StationLoader {
 
         do {
 
-            let data = try Data(
-                contentsOf: url
-            )
+            let data =
+                try Data(
+                    contentsOf: url
+                )
 
             return try JSONDecoder().decode(
                 [RadioStation].self,
@@ -237,21 +254,23 @@ final class StationLoader {
     }
 
 
-    // MARK: - Conversion
+    // MARK: - Model Conversion
 
-    private func makeUserStation(
-        from station: RadioStation
-    ) -> UserStation {
+    private func makeUserStations(
+        from stations: [RadioStation]
+    ) -> [UserStation] {
 
-        UserStation(
-            id: station.id,
-            name: station.name,
-            genre: station.genre,
-            streamURL: station.streamURL,
-            artworkURL: station.artworkURL,
-            country: station.country,
-            tags: station.tags
-        )
+        stations.map {
+            UserStation(
+                id: $0.id,
+                name: $0.name,
+                genre: $0.genre,
+                streamURL: $0.streamURL,
+                artworkURL: $0.artworkURL,
+                country: $0.country,
+                tags: $0.tags
+            )
+        }
     }
 
 
@@ -269,19 +288,11 @@ final class StationLoader {
 
     private var applicationSupportURL: URL {
 
-        guard let baseURL =
-            fileManager.urls(
-                for: .applicationSupportDirectory,
-                in: .userDomainMask
-            ).first
-        else {
-            return URL(
-                fileURLWithPath:
-                    NSHomeDirectory()
-            )
-        }
-
-        return baseURL.appendingPathComponent(
+        fileManager.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        )[0]
+        .appendingPathComponent(
             applicationSupportDirectoryName,
             isDirectory: true
         )
@@ -290,9 +301,10 @@ final class StationLoader {
 
     private var userStationsURL: URL {
 
-        applicationSupportURL.appendingPathComponent(
-            stationsFileName
-        )
+        applicationSupportURL
+            .appendingPathComponent(
+                stationsFileName
+            )
     }
 }
 

@@ -15,28 +15,28 @@ struct AllStationsView: View {
     @State private var searchText = ""
 
 
+    // MARK: - Filtered Stations
+
     private var filteredStations: [RadioStation] {
 
-        let query = searchText
-            .trimmingCharacters(
-                in: .whitespacesAndNewlines
-            )
-            .lowercased()
-
+        let query =
+            searchText
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
+                .lowercased()
 
         guard !query.isEmpty else {
-
             return appState.stationManager.stations
         }
 
-
         return appState.stationManager.stations.filter { station in
 
-            let name = station.name.lowercased()
+            let name =
+                station.name.lowercased()
 
             let genre =
-                station.genre?.lowercased()
-                ?? ""
+                station.genre?.lowercased() ?? ""
 
             let tags =
                 station.tags?
@@ -48,13 +48,14 @@ struct AllStationsView: View {
                     )
                     ?? ""
 
-
             return name.contains(query)
                 || genre.contains(query)
                 || tags.contains(query)
         }
     }
 
+
+    // MARK: - Body
 
     var body: some View {
 
@@ -79,6 +80,8 @@ struct AllStationsView: View {
     }
 
 
+    // MARK: - Header
+
     private var header: some View {
 
         HStack {
@@ -93,9 +96,7 @@ struct AllStationsView: View {
                     systemName: "chevron.left"
                 )
             }
-            .buttonStyle(
-                .plain
-            )
+            .buttonStyle(.plain)
             .help("Back")
 
 
@@ -107,6 +108,8 @@ struct AllStationsView: View {
         }
     }
 
+
+    // MARK: - Search
 
     private var searchField: some View {
 
@@ -120,25 +123,27 @@ struct AllStationsView: View {
     }
 
 
+    // MARK: - Station List
+
     private var stationList: some View {
 
-        ScrollView {
+        let stations =
+            filteredStations
+
+        return ScrollView {
 
             LazyVStack(
                 spacing: 4
             ) {
 
-                ForEach(
-                    filteredStations
-                ) { station in
+                ForEach(stations) { station in
 
                     stationRow(
                         station
                     )
                 }
 
-
-                if filteredStations.isEmpty {
+                if stations.isEmpty {
 
                     Text("No stations found")
                         .font(.caption)
@@ -157,6 +162,8 @@ struct AllStationsView: View {
         }
     }
 
+
+    // MARK: - Station Row
 
     private func stationRow(
         _ station: RadioStation
@@ -182,7 +189,6 @@ struct AllStationsView: View {
                         station
                     )
 
-
                     VStack(
                         alignment: .leading,
                         spacing: 2
@@ -205,13 +211,11 @@ struct AllStationsView: View {
                                 )
                             }
 
-
                             Text(
                                 station.name
                             )
                             .lineLimit(1)
                         }
-
 
                         if let genre = station.genre {
 
@@ -266,6 +270,8 @@ struct AllStationsView: View {
     }
 
 
+    // MARK: - Artwork
+
     private func stationArtwork(
         _ station: RadioStation
     ) -> some View {
@@ -315,7 +321,9 @@ struct AllStationsView: View {
             height: 32
         )
         .background(
-            Color.secondary.opacity(0.12)
+            Color.secondary.opacity(
+                0.12
+            )
         )
         .clipShape(
             RoundedRectangle(
@@ -325,19 +333,15 @@ struct AllStationsView: View {
     }
 
 
+    // MARK: - Station Selection
+
     private func select(
         _ station: RadioStation
     ) {
 
-        appState.stationManager.select(
+        appState.playStation(
             station
         )
-
-
-        appState.player.play(
-            station: station
-        )
-
 
         isPresented = false
     }

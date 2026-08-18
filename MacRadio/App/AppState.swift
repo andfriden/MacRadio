@@ -12,38 +12,39 @@ final class AppState: ObservableObject {
     static let shared = AppState()
 
 
+    // MARK: - Published State
+
     @Published var settings: AppSettings
-
     @Published var player: RadioPlayer
-
     @Published var stationManager: StationManager
-
     @Published var artworkService: ArtworkService
 
 
-    let mediaCommandService: MediaCommandService
+    // MARK: - Services
 
+    let mediaCommandService: MediaCommandService
     let notificationService: NotificationService
 
 
+    // MARK: - Cancellables
+
     private var cancellables = Set<AnyCancellable>()
 
+
+    // MARK: - Init
 
     private init() {
 
         let settings =
             AppSettings()
 
-
         let artworkService =
             ArtworkService()
-
 
         let stationManager =
             StationManager(
                 settings: settings
             )
-
 
         let player =
             RadioPlayer(
@@ -51,18 +52,10 @@ final class AppState: ObservableObject {
                 artworkService: artworkService
             )
 
-
-        self.settings =
-            settings
-
-        self.artworkService =
-            artworkService
-
-        self.stationManager =
-            stationManager
-
-        self.player =
-            player
+        self.settings = settings
+        self.artworkService = artworkService
+        self.stationManager = stationManager
+        self.player = player
 
 
         self.mediaCommandService =
@@ -78,13 +71,12 @@ final class AppState: ObservableObject {
                         let station =
                             stationManager.nextStation()
                     else {
-
                         return
                     }
 
-
-                    player.play(
-                        station: station
+                    AppState.play(
+                        station,
+                        with: player
                     )
                 },
                 previousStation: {
@@ -96,13 +88,12 @@ final class AppState: ObservableObject {
                         let station =
                             stationManager.previousStation()
                     else {
-
                         return
                     }
 
-
-                    player.play(
-                        station: station
+                    AppState.play(
+                        station,
+                        with: player
                     )
                 }
             )
@@ -123,7 +114,6 @@ final class AppState: ObservableObject {
 
         player.objectWillChange
             .sink { [weak self] _ in
-
                 self?.objectWillChange.send()
             }
             .store(
@@ -133,7 +123,6 @@ final class AppState: ObservableObject {
 
         stationManager.objectWillChange
             .sink { [weak self] _ in
-
                 self?.objectWillChange.send()
             }
             .store(
@@ -143,7 +132,6 @@ final class AppState: ObservableObject {
 
         settings.objectWillChange
             .sink { [weak self] _ in
-
                 self?.objectWillChange.send()
             }
             .store(
@@ -154,14 +142,41 @@ final class AppState: ObservableObject {
         if let station =
             stationManager.currentStation
         {
-
             player.currentStation =
                 station
         }
 
 
         mediaCommandService.start()
-
         notificationService.start()
+    }
+
+
+    // MARK: - Station Playback
+
+    func playStation(
+        _ station: RadioStation
+    ) {
+
+        stationManager.select(
+            station
+        )
+
+        player.play(
+            station: station
+        )
+    }
+
+
+    // MARK: - Shared Playback Helper
+
+    private static func play(
+        _ station: RadioStation,
+        with player: RadioPlayer
+    ) {
+
+        player.play(
+            station: station
+        )
     }
 }

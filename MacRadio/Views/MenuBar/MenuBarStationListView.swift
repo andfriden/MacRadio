@@ -28,6 +28,8 @@ struct MenuBarStationListView: View {
     }
 
 
+    // MARK: - Recent Stations
+
     private var recentStationsView: some View {
 
         VStack(
@@ -43,9 +45,7 @@ struct MenuBarStationListView: View {
 
                 Text("No recent stations")
                     .font(.caption)
-                    .foregroundStyle(
-                        .secondary
-                    )
+                    .foregroundStyle(.secondary)
 
             } else {
 
@@ -80,14 +80,10 @@ struct MenuBarStationListView: View {
                     Image(
                         systemName: "chevron.right"
                     )
-                    .foregroundStyle(
-                        .secondary
-                    )
+                    .foregroundStyle(.secondary)
                 }
             }
-            .buttonStyle(
-                .plain
-            )
+            .buttonStyle(.plain)
             .padding(
                 .top,
                 4
@@ -95,6 +91,8 @@ struct MenuBarStationListView: View {
         }
     }
 
+
+    // MARK: - Station Row
 
     private func recentStationRow(
         _ station: RadioStation
@@ -104,7 +102,7 @@ struct MenuBarStationListView: View {
 
             Button {
 
-                select(
+                appState.playStation(
                     station
                 )
 
@@ -119,16 +117,13 @@ struct MenuBarStationListView: View {
                             : "radio"
                     )
 
-
                     Text(
                         station.name
                     )
                     .lineLimit(1)
                 }
             }
-            .buttonStyle(
-                .plain
-            )
+            .buttonStyle(.plain)
 
 
             Spacer()
@@ -149,9 +144,7 @@ struct MenuBarStationListView: View {
                         : "star"
                 )
             }
-            .buttonStyle(
-                .plain
-            )
+            .buttonStyle(.plain)
             .help(
                 station.isFavorite
                 ? "Remove from favorites"
@@ -161,26 +154,13 @@ struct MenuBarStationListView: View {
     }
 
 
-    private func select(
-        _ station: RadioStation
-    ) {
-
-        appState.stationManager.select(
-            station
-        )
-
-
-        appState.player.play(
-            station: station
-        )
-    }
-
+    // MARK: - Helpers
 
     private func isCurrent(
         _ station: RadioStation
     ) -> Bool {
 
         appState.player.currentStation?.id ==
-        station.id
+            station.id
     }
 }
