@@ -1,0 +1,70 @@
+name: Build MacRadio DMG
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build MacRadio
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Show Xcode version
+        run: |
+          xcodebuild -version
+          xcode-select -p
+
+      - name: Build Release archive
+        run: |
+          rm -rf build
+          xcodebuild \
+            -project MacRadio.xcodeproj \
+            -scheme MacRadio \
+            -configuration Release \
+            -archivePath build/MacRadio.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            archive
+
+      - name: Prepare application
+        run: |
+          mkdir -p build/dmg
+          cp -R build/MacRadio.xcarchive/Products/Applications/MacRadio.app build/dmg/MacRadio.app
+          ln -s /Applications build/dmg/Applications
+
+      - name: Create DMG
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          if [[ "$VERSION" == v* ]]; then
+            DMG_NAME="MacRadio-${VERSION}.dmg"
+          else
+            DMG_NAME="MacRadio-${GITHUB_SHA::7}.dmg"
+          fi
+          hdiutil create \
+            -volname "MacRadio" \
+            -srcfolder build/dmg \
+            -ov \
+            -format UDZO \
+            "build/${DMG_NAME}"
+          echo "DMG_NAME=${DMG_NAME}" >> "$GITHUB_ENV"
+
+      - name: Verify DMG
+        run: |
+          ls -lh "build/${DMG_NAME}"
+          file "build/${DMG_NAME}"
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: MacRadio-DMG
+          path: build/*.dmg
+          if-no-files-found: error
