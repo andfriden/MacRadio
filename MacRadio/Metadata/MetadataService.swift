@@ -11,52 +11,41 @@ final class MetadataService: ObservableObject {
 
     @Published var currentTrack: Track?
 
-
     private let metadataReader = ICYMetadataReader()
-
     private let artworkService: ArtworkService
 
     private var artworkTask: Task<Void, Never>?
-
     private var artworkRequestID = UUID()
 
 
     init(
         artworkService: ArtworkService
     ) {
-
         self.artworkService = artworkService
     }
 
 
     // MARK: - Start
 
-
     func start(
         url: URL
     ) {
 
-        artworkTask?.cancel()
-
-        artworkTask = nil
-
-        artworkRequestID = UUID()
+        invalidateArtworkRequest()
 
         currentTrack = nil
-
 
         artworkService.load(
             from: nil
         )
 
-
-        metadataReader.onMetadataUpdate = { [weak self] metadata in
+        metadataReader.onMetadataUpdate = {
+            [weak self] metadata in
 
             self?.handleMetadata(
                 metadata
             )
         }
-
 
         metadataReader.start(
             url: url
@@ -66,22 +55,13 @@ final class MetadataService: ObservableObject {
 
     // MARK: - Stop
 
-
     func stop() {
 
         metadataReader.stop()
 
-
-        artworkTask?.cancel()
-
-        artworkTask = nil
-
-
-        artworkRequestID = UUID()
-
+        invalidateArtworkRequest()
 
         currentTrack = nil
-
 
         artworkService.load(
             from: nil
@@ -91,144 +71,102 @@ final class MetadataService: ObservableObject {
 
     // MARK: - Metadata
 
-
     private func handleMetadata(
         _ streamTitle: String
     ) {
 
-        guard let track = parseTrack(
-            from: streamTitle
-        ) else {
-
+        guard let track =
+            parseTrack(
+                from: streamTitle
+            )
+        else {
             return
         }
-
 
         guard track != currentTrack else {
-
             return
         }
 
-
         artworkTask?.cancel()
-
 
         let requestID = UUID()
 
         artworkRequestID = requestID
-
-
         currentTrack = track
 
+        artworkTask =
+            Task { [weak self] in
 
-        artworkTask = Task { [weak self] in
-
-            guard let self else {
-
-                return
-            }
-
-
-            let artworkURL =
-                await artworkService.artwork(
-                    for: track
-                )
-
-
-            guard !Task.isCancelled else {
-
-                return
-            }
-
-
-            await MainActor.run {
-
-                guard self.artworkRequestID ==
-                    requestID
-                else {
-
+                guard let self else {
                     return
                 }
 
+                let artworkURL =
+                    await artworkService.artwork(
+                        for: track
+                    )
 
-                self.artworkService.load(
-                    from: artworkURL
-                )
+                guard !Task.isCancelled else {
+                    return
+                }
 
+                await MainActor.run {
 
-                self.currentTrack = Track(
-                    artist: track.artist,
-                    title: track.title,
-                    artworkURL: artworkURL
-                )
+                    guard self.artworkRequestID ==
+                            requestID
+                    else {
+                        return
+                    }
 
+                    self.artworkService.load(
+                        from: artworkURL
+                    )
 
-                self.artworkTask = nil
+                    self.currentTrack = Track(
+                        artist: track.artist,
+                        title: track.title,
+                        artworkURL: artworkURL
+                    )
+
+                    self.artworkTask = nil
+                }
             }
-        }
     }
 
 
     // MARK: - Track Parsing
 
-
     private func parseTrack(
         from streamTitle: String
     ) -> Track? {
 
-        let normalized =
-            streamTitle
-                .trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                )
-
-
-        guard !normalized.isEmpty else {
-
-            return nil
-        }
-
-
         let parts =
-            normalized
+            streamTitle
                 .split(
                     separator: "-",
                     maxSplits: 1,
                     omittingEmptySubsequences: true
                 )
                 .map {
-                    $0.trimmingCharacters(
-                        in: .whitespacesAndNewlines
-                    )
+                    $0
+                        .trimmingCharacters(
+                            in:
+                                .whitespacesAndNewlines
+                        )
                 }
 
-
         guard parts.count == 2 else {
-
             return nil
         }
-
 
         let artist = parts[0]
-
         let title = parts[1]
 
-
-        guard isValidMetadataValue(
-            artist
-        ) else {
-
+        guard isValidMetadataValue(artist),
+              isValidMetadataValue(title)
+        else {
             return nil
         }
-
-
-        guard isValidMetadataValue(
-            title
-        ) else {
-
-            return nil
-        }
-
 
         return Track(
             artist: artist,
@@ -240,7 +178,6 @@ final class MetadataService: ObservableObject {
 
     // MARK: - Validation
 
-
     private func isValidMetadataValue(
         _ value: String
     ) -> Bool {
@@ -248,16 +185,14 @@ final class MetadataService: ObservableObject {
         let normalized =
             value
                 .trimmingCharacters(
-                    in: .whitespacesAndNewlines
+                    in:
+                        .whitespacesAndNewlines
                 )
                 .lowercased()
 
-
         guard !normalized.isEmpty else {
-
             return false
         }
-
 
         switch normalized {
 
@@ -272,10 +207,20 @@ final class MetadataService: ObservableObject {
 
             return false
 
-
         default:
 
             return true
         }
+    }
+
+
+    // MARK: - Artwork Request
+
+    private func invalidateArtworkRequest() {
+
+        artworkTask?.cancel()
+        artworkTask = nil
+
+        artworkRequestID = UUID()
     }
 }

@@ -10,8 +10,8 @@ import Combine
 final class StationManager: ObservableObject {
 
     @Published var stations: [RadioStation] = []
-    @Published var currentIndex: Int = 0
-    @Published var hasSelectedStation: Bool = false
+    @Published var currentIndex = 0
+    @Published var hasSelectedStation = false
 
     private let loader = StationLoader()
     private let settings: AppSettings
@@ -38,15 +38,17 @@ final class StationManager: ObservableObject {
 
     func reload() {
 
+        let currentStationID =
+            currentStation?.id
+
         stations = loader.load()
 
         restoreFavorites()
 
-        guard
-            let currentStationID = currentStation?.id,
-            let index = stations.firstIndex(
+        guard let currentStationID,
+              let index = stations.firstIndex(
                 where: { $0.id == currentStationID }
-            )
+              )
         else {
             currentIndex = 0
             hasSelectedStation = false
@@ -77,11 +79,9 @@ final class StationManager: ObservableObject {
 
     var currentStation: RadioStation? {
 
-        guard hasSelectedStation else {
-            return nil
-        }
-
-        guard stations.indices.contains(currentIndex) else {
+        guard hasSelectedStation,
+              stations.indices.contains(currentIndex)
+        else {
             return nil
         }
 
@@ -92,9 +92,8 @@ final class StationManager: ObservableObject {
     var recentStations: [RadioStation] {
 
         settings.recentStationIDs.compactMap { id in
-
-            stations.first { station in
-                station.id.uuidString == id
+            stations.first {
+                $0.id.uuidString == id
             }
         }
     }
@@ -106,12 +105,9 @@ final class StationManager: ObservableObject {
         _ station: RadioStation
     ) {
 
-        guard
-            let index = stations.firstIndex(
-                where: {
-                    $0.id == station.id
-                }
-            )
+        guard let index = index(
+            of: station
+        )
         else {
             return
         }
@@ -130,21 +126,41 @@ final class StationManager: ObservableObject {
 
     func nextStation() -> RadioStation? {
 
+        selectRelativeStation(
+            offset: 1
+        )
+    }
+
+
+    func previousStation() -> RadioStation? {
+
+        selectRelativeStation(
+            offset: -1
+        )
+    }
+
+
+    private func selectRelativeStation(
+        offset: Int
+    ) -> RadioStation? {
+
         guard !stations.isEmpty else {
             return nil
         }
 
-        if !hasSelectedStation {
+        if hasSelectedStation {
 
-            currentIndex = 0
+            currentIndex =
+                wrappedIndex(
+                    currentIndex + offset
+                )
 
         } else {
 
-            currentIndex += 1
-
-            if currentIndex >= stations.count {
-                currentIndex = 0
-            }
+            currentIndex =
+                offset > 0
+                ? 0
+                : stations.count - 1
         }
 
         hasSelectedStation = true
@@ -162,37 +178,17 @@ final class StationManager: ObservableObject {
     }
 
 
-    func previousStation() -> RadioStation? {
+    private func wrappedIndex(
+        _ index: Int
+    ) -> Int {
 
-        guard !stations.isEmpty else {
-            return nil
+        let count = stations.count
+
+        guard count > 0 else {
+            return 0
         }
 
-        if !hasSelectedStation {
-
-            currentIndex = stations.count - 1
-
-        } else {
-
-            currentIndex -= 1
-
-            if currentIndex < 0 {
-                currentIndex = stations.count - 1
-            }
-        }
-
-        hasSelectedStation = true
-
-        guard let station = currentStation else {
-            return nil
-        }
-
-        saveLastStation()
-        recordRecentStation(
-            station
-        )
-
-        return station
+        return (index % count + count) % count
     }
 
 
@@ -202,9 +198,11 @@ final class StationManager: ObservableObject {
         _ station: RadioStation
     ) {
 
-        let stationID = station.id.uuidString
+        let stationID =
+            station.id.uuidString
 
-        var recent = settings.recentStationIDs
+        var recent =
+            settings.recentStationIDs
 
         recent.removeAll { id in
             id == stationID
@@ -215,13 +213,10 @@ final class StationManager: ObservableObject {
             at: 0
         )
 
-        if recent.count > 3 {
-            recent = Array(
+        settings.recentStationIDs =
+            Array(
                 recent.prefix(3)
             )
-        }
-
-        settings.recentStationIDs = recent
     }
 
 
@@ -231,12 +226,9 @@ final class StationManager: ObservableObject {
         _ station: RadioStation
     ) {
 
-        guard
-            let index = stations.firstIndex(
-                where: {
-                    $0.id == station.id
-                }
-            )
+        guard let index = index(
+            of: station
+        )
         else {
             return
         }
@@ -249,22 +241,23 @@ final class StationManager: ObservableObject {
 
     var favoriteStations: [RadioStation] {
 
-        stations.filter {
-            $0.isFavorite
-        }
+        stations.filter(
+            \.isFavorite
+        )
     }
 
 
     private func restoreFavorites() {
 
-        let favorites = Set(
-            settings.favoriteStationIDs
-        )
+        let favoriteIDs =
+            Set(
+                settings.favoriteStationIDs
+            )
 
         for index in stations.indices {
 
             stations[index].isFavorite =
-                favorites.contains(
+                favoriteIDs.contains(
                     stations[index]
                         .id
                         .uuidString
@@ -277,9 +270,7 @@ final class StationManager: ObservableObject {
 
         settings.favoriteStationIDs =
             stations
-                .filter {
-                    $0.isFavorite
-                }
+                .filter(\.isFavorite)
                 .map {
                     $0.id.uuidString
                 }
@@ -301,25 +292,34 @@ final class StationManager: ObservableObject {
 
     private func restoreLastStation() {
 
-        let savedID = settings.lastStationID
+        let savedID =
+            settings.lastStationID
 
-        guard !savedID.isEmpty else {
-            hasSelectedStation = false
-            return
-        }
-
-        guard
-            let index = stations.firstIndex(
+        guard !savedID.isEmpty,
+              let index = stations.firstIndex(
                 where: {
                     $0.id.uuidString == savedID
                 }
-            )
+              )
         else {
+            currentIndex = 0
             hasSelectedStation = false
             return
         }
 
         currentIndex = index
         hasSelectedStation = true
+    }
+
+
+    // MARK: - Helpers
+
+    private func index(
+        of station: RadioStation
+    ) -> Int? {
+
+        stations.firstIndex {
+            $0.id == station.id
+        }
     }
 }

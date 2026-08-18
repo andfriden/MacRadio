@@ -11,13 +11,12 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
     private var session: URLSession?
     private var task: URLSessionDataTask?
 
-
-    private var metadataInterval: Int = 0
+    private var metadataInterval = 0
     private var buffer = Data()
 
-
-    private var sessionID = UUID()
-
+    // Identifies the currently active metadata session and prevents
+    // callbacks from an older station/session from updating the UI.
+    private var currentSessionID = UUID()
 
     var onMetadataUpdate: ((String) -> Void)?
 
@@ -31,8 +30,8 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         stop()
 
         let newSessionID = UUID()
-        sessionID = newSessionID
 
+        currentSessionID = newSessionID
         metadataInterval = 0
         buffer.removeAll()
 
@@ -53,17 +52,15 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
 
         delegateQueue.maxConcurrentOperationCount = 1
 
-        session =
-            URLSession(
-                configuration: configuration,
-                delegate: self,
-                delegateQueue: delegateQueue
-            )
+        session = URLSession(
+            configuration: configuration,
+            delegate: self,
+            delegateQueue: delegateQueue
+        )
 
-        task =
-            session?.dataTask(
-                with: request
-            )
+        task = session?.dataTask(
+            with: request
+        )
 
         task?.resume()
     }
@@ -73,7 +70,7 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
 
     func stop() {
 
-        sessionID = UUID()
+        currentSessionID = UUID()
 
         task?.cancel()
         session?.invalidateAndCancel()
@@ -97,16 +94,10 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         ) -> Void
     ) {
 
-        guard session === self.session else {
-
-            completionHandler(
-                .cancel
-            )
-
-            return
-        }
-
-        guard dataTask === task else {
+        guard ensureValid(
+            session: session,
+            dataTask: dataTask
+        ) else {
 
             completionHandler(
                 .cancel
@@ -118,7 +109,6 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         if let response =
             response as? HTTPURLResponse
         {
-
             metadataInterval =
                 icyMetadataInterval(
                     from: response
@@ -139,11 +129,10 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         didReceive data: Data
     ) {
 
-        guard session === self.session else {
-            return
-        }
-
-        guard dataTask === task else {
+        guard ensureValid(
+            session: session,
+            dataTask: dataTask
+        ) else {
             return
         }
 
@@ -166,6 +155,11 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         guard metadataInterval > 0 else {
             return
         }
+
+        // ICY protocol:
+        // audio data is delivered in blocks of `metadataInterval` bytes.
+        // The following byte contains the metadata length in 16-byte units,
+        // followed by the metadata block itself.
 
         while true {
 
@@ -243,21 +237,16 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
             decodeMetadata(
                 data
             )
-            .trimmingCharacters(
-                in:
-                    .whitespacesAndNewlines
-                    .union(.controlCharacters)
-            )
+            .trimmedForMetadata
 
         guard !text.isEmpty else {
             return
         }
 
-        guard
-            let title =
-                extractStreamTitle(
-                    from: text
-                )
+        guard let title =
+            extractStreamTitle(
+                from: text
+            )
         else {
             return
         }
@@ -268,17 +257,14 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
                     of: "\0",
                     with: ""
                 )
-                .trimmingCharacters(
-                    in:
-                        .whitespacesAndNewlines
-                )
+                .trimmedForMetadata
 
         guard !cleanedTitle.isEmpty else {
             return
         }
 
         let callbackSessionID =
-            sessionID
+            currentSessionID
 
         DispatchQueue.main.async { [weak self] in
 
@@ -286,7 +272,7 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
                 return
             }
 
-            guard self.sessionID ==
+            guard self.currentSessionID ==
                     callbackSessionID
             else {
                 return
@@ -307,77 +293,66 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
 
         let marker = "StreamTitle="
 
-        guard
-            let markerRange =
-                text.range(
-                    of: marker,
-                    options: .caseInsensitive
-                )
-        else {
+        guard let range = text.range(
+            of: marker,
+            options: .caseInsensitive
+        ) else {
             return nil
         }
 
-        var valueStart =
-            markerRange.upperBound
+        var start = range.upperBound
 
-        while valueStart < text.endIndex {
-
-            let character =
-                text[valueStart]
-
-            if character == "'" ||
-               character == "\""
-            {
-
-                valueStart =
-                    text.index(
-                        after: valueStart
-                    )
-
-                break
-            }
-
-            if character.isWhitespace {
-
-                valueStart =
-                    text.index(
-                        after: valueStart
-                    )
-
-                continue
-            }
-
-            break
+        while start < text.endIndex,
+              text[start].isWhitespace
+        {
+            start = text.index(
+                after: start
+            )
         }
 
-        var endIndex =
-            valueStart
+        guard start < text.endIndex else {
+            return nil
+        }
 
-        while endIndex < text.endIndex {
+        let firstCharacter = text[start]
 
-            let character =
-                text[endIndex]
+        if firstCharacter == "'" ||
+           firstCharacter == "\""
+        {
 
-            if character == "'" ||
-               character == "\""
-            {
-                break
-            }
+            start = text.index(
+                after: start
+            )
 
-            endIndex =
-                text.index(
-                    after: endIndex
+            guard let end = text[start...]
+                .firstIndex(
+                    of: firstCharacter
                 )
+            else {
+                return nil
+            }
+
+            return String(
+                text[start..<end]
+            )
         }
 
-        guard endIndex > valueStart else {
+        var end = start
+
+        while end < text.endIndex,
+              !text[end].isWhitespace
+        {
+            end = text.index(
+                after: end
+            )
+        }
+
+        guard end > start else {
             return nil
         }
 
         return String(
-            text[
-                valueStart..<endIndex
-            ]
+            text[start..<end]
         )
     }
 
@@ -400,8 +375,7 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         if let windows1252 =
             String(
                 data: data,
-                encoding:
-                    .windowsCP1252
+                encoding: .windowsCP1252
             )
         {
             return windows1252
@@ -410,8 +384,7 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         if let isoLatin1 =
             String(
                 data: data,
-                encoding:
-                    .isoLatin1
+                encoding: .isoLatin1
             )
         {
             return isoLatin1
@@ -427,47 +400,74 @@ final class ICYMetadataReader: NSObject, URLSessionDataDelegate {
         from response: HTTPURLResponse
     ) -> Int {
 
-        for (key, value) in response.allHeaderFields {
+        guard let header =
+            response.allHeaderFields.first(
+                where: { key, _ in
 
-            guard
-                String(
-                    describing: key
-                )
-                .caseInsensitiveCompare(
-                    "icy-metaint"
-                ) == .orderedSame
-            else {
-                continue
-            }
-
-            if let stringValue =
-                value as? String,
-               let interval =
-                    Int(
-                        stringValue.trimmingCharacters(
-                            in:
-                                .whitespacesAndNewlines
-                        )
+                    String(
+                        describing: key
                     )
-            {
+                    .caseInsensitiveCompare(
+                        "icy-metaint"
+                    ) == .orderedSame
+                }
+            )
+        else {
+            return 0
+        }
 
-                return max(
-                    0,
-                    interval
+        if let stringValue =
+            header.value as? String,
+           let interval =
+                Int(
+                    stringValue.trimmingCharacters(
+                        in:
+                            .whitespacesAndNewlines
+                    )
                 )
-            }
+        {
+            return max(
+                0,
+                interval
+            )
+        }
 
-            if let number =
-                value as? NSNumber
-            {
-
-                return max(
-                    0,
-                    number.intValue
-                )
-            }
+        if let number =
+            header.value as? NSNumber
+        {
+            return max(
+                0,
+                number.intValue
+            )
         }
 
         return 0
+    }
+
+
+    // MARK: - Validation
+
+    private func ensureValid(
+        session: URLSession,
+        dataTask: URLSessionDataTask
+    ) -> Bool {
+
+        session === self.session &&
+        dataTask === self.task
+    }
+}
+
+
+// MARK: - Metadata String Helpers
+
+private extension String {
+
+    var trimmedForMetadata: String {
+
+        trimmingCharacters(
+            in:
+                .whitespacesAndNewlines
+                .union(.controlCharacters)
+        )
     }
 }

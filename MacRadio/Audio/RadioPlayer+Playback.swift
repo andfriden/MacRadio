@@ -11,69 +11,33 @@ extension RadioPlayer {
 
     // MARK: - Playback
 
-
     func play(
         station: RadioStation
     ) {
 
         cancelReconnect()
-
         cancelStallDetection()
 
         reconnectAttempts = 0
 
-
         resetPlayerObservers()
 
         player?.pause()
-
         player = nil
-
         playerItem = nil
-
 
         metadataService.stop()
 
-
         currentStation = station
-
         currentTrack = nil
-
         state = .connecting
 
-
-        let item = AVPlayerItem(
-            url: station.streamURL
-        )
-
-
-        playerItem = item
-
-
-        let newPlayer = AVPlayer(
-            playerItem: item
-        )
-
-
-        player = newPlayer
-
-
-        observe(
-            player: newPlayer,
-            item: item
-        )
-
-
-        applyVolume()
-
-
-        metadataService.start(
-            url: station.streamURL
-        )
-
+        let newPlayer =
+            preparePlayer(
+                for: station
+            )
 
         newPlayer.play()
-
 
         print(
             "PLAY:",
@@ -91,7 +55,6 @@ extension RadioPlayer {
             return
         }
 
-
         play(
             station: station
         )
@@ -103,19 +66,13 @@ extension RadioPlayer {
         switch state {
 
         case .playing:
-
             pause()
 
-
         case .paused:
-
             resume()
 
-
         case .failed:
-
             retry()
-
 
         default:
 
@@ -132,13 +89,10 @@ extension RadioPlayer {
     func pause() {
 
         guard player != nil else {
-
             return
         }
 
-
         cancelReconnect()
-
         cancelStallDetection()
 
         player?.pause()
@@ -150,10 +104,8 @@ extension RadioPlayer {
     func resume() {
 
         guard let player else {
-
             return
         }
-
 
         reconnectAttempts = 0
 
@@ -174,62 +126,28 @@ extension RadioPlayer {
             return
         }
 
-
         cancelReconnect()
-
         cancelStallDetection()
 
         reconnectAttempts = 0
 
-
         resetPlayerObservers()
 
         player?.pause()
-
         player = nil
-
         playerItem = nil
-
 
         metadataService.stop()
 
         currentTrack = nil
-
         state = .connecting
 
-
-        let item = AVPlayerItem(
-            url: station.streamURL
-        )
-
-
-        playerItem = item
-
-
-        let newPlayer = AVPlayer(
-            playerItem: item
-        )
-
-
-        player = newPlayer
-
-
-        observe(
-            player: newPlayer,
-            item: item
-        )
-
-
-        applyVolume()
-
-
-        metadataService.start(
-            url: station.streamURL
-        )
-
+        let newPlayer =
+            preparePlayer(
+                for: station
+            )
 
         newPlayer.play()
-
 
         print(
             "PLAYER SYSTEM RESUME:",
@@ -241,28 +159,20 @@ extension RadioPlayer {
     func stop() {
 
         cancelReconnect()
-
         cancelStallDetection()
 
         reconnectAttempts = 0
 
-
         resetPlayerObservers()
 
         player?.pause()
-
         player = nil
-
         playerItem = nil
-
 
         metadataService.stop()
 
-
         currentStation = nil
-
         currentTrack = nil
-
 
         state = .stopped
     }
@@ -271,19 +181,47 @@ extension RadioPlayer {
     func clearError() {
 
         cancelReconnect()
-
         cancelStallDetection()
 
         reconnectAttempts = 0
 
-
         if currentStation != nil {
-
             state = .connecting
-
         } else {
-
             state = .stopped
         }
+    }
+
+
+    // MARK: - Player Setup
+
+        func preparePlayer(
+        for station: RadioStation
+    ) -> AVPlayer {
+
+        let item = AVPlayerItem(
+            url: station.streamURL
+        )
+
+        playerItem = item
+
+        let newPlayer = AVPlayer(
+            playerItem: item
+        )
+
+        player = newPlayer
+
+        observe(
+            player: newPlayer,
+            item: item
+        )
+
+        applyVolume()
+
+        metadataService.start(
+            url: station.streamURL
+        )
+
+        return newPlayer
     }
 }

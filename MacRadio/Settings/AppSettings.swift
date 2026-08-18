@@ -2,8 +2,6 @@
 //  AppSettings.swift
 //  MacRadio
 //
-//  Created by Андерс Фриден on 16.08.2026.
-//
 
 import Foundation
 import Combine
@@ -11,126 +9,136 @@ import Combine
 
 final class AppSettings: ObservableObject {
 
+    // MARK: - Keys
+
+    private enum Key {
+        static let lastStationID = "lastStationID"
+        static let recentStationIDs = "recentStationIDs"
+        static let favoriteStationIDs = "favoriteStationIDs"
+        static let volume = "volume"
+        static let isMuted = "isMuted"
+        static let notificationsEnabled = "notificationsEnabled"
+    }
+
+
+    // MARK: - Published Settings
+
     @Published var lastStationID: String {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 lastStationID,
-                forKey: "lastStationID"
+                forKey: Key.lastStationID
             )
         }
     }
-
 
     @Published var recentStationIDs: [String] {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 recentStationIDs,
-                forKey: "recentStationIDs"
+                forKey: Key.recentStationIDs
             )
         }
     }
-
 
     @Published var favoriteStationIDs: [String] {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 favoriteStationIDs,
-                forKey: "favoriteStationIDs"
+                forKey: Key.favoriteStationIDs
             )
         }
     }
-
 
     @Published var volume: Double {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 volume,
-                forKey: "volume"
+                forKey: Key.volume
             )
         }
     }
-
 
     @Published var isMuted: Bool {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 isMuted,
-                forKey: "isMuted"
+                forKey: Key.isMuted
             )
         }
     }
-
 
     @Published var notificationsEnabled: Bool {
-
         didSet {
-
-            UserDefaults.standard.set(
+            save(
                 notificationsEnabled,
-                forKey: "notificationsEnabled"
+                forKey: Key.notificationsEnabled
             )
         }
     }
 
 
-    init() {
+    // MARK: - Init
+
+    init(
+        defaults: UserDefaults = .standard
+    ) {
+
+        self.defaults = defaults
 
         lastStationID =
-            UserDefaults.standard.string(
-                forKey: "lastStationID"
+            defaults.string(
+                forKey: Key.lastStationID
             )
             ?? ""
 
-
         recentStationIDs =
-            UserDefaults.standard.stringArray(
-                forKey: "recentStationIDs"
+            defaults.stringArray(
+                forKey: Key.recentStationIDs
             )
             ?? []
-
 
         favoriteStationIDs =
-            UserDefaults.standard.stringArray(
-                forKey: "favoriteStationIDs"
+            defaults.stringArray(
+                forKey: Key.favoriteStationIDs
             )
             ?? []
 
-
         volume =
-            UserDefaults.standard.object(
-                forKey: "volume"
+            defaults.object(
+                forKey: Key.volume
             ) as? Double
             ?? 1.0
 
-
         isMuted =
-            UserDefaults.standard.bool(
-                forKey: "isMuted"
+            defaults.bool(
+                forKey: Key.isMuted
             )
 
+        notificationsEnabled =
+            defaults.object(
+                forKey: Key.notificationsEnabled
+            ) == nil
+            ? true
+            : defaults.bool(
+                forKey: Key.notificationsEnabled
+            )
+    }
 
-        if UserDefaults.standard.object(
-            forKey: "notificationsEnabled"
-        ) == nil {
 
-            notificationsEnabled = true
+    // MARK: - Private
 
-        } else {
+    private let defaults: UserDefaults
 
-            notificationsEnabled =
-                UserDefaults.standard.bool(
-                    forKey: "notificationsEnabled"
-                )
-        }
+
+    private func save<T>(
+        _ value: T,
+        forKey key: String
+    ) {
+
+        defaults.set(
+            value,
+            forKey: key
+        )
     }
 }

@@ -19,13 +19,11 @@ final class StationLoader {
 
     func load() -> [RadioStation] {
 
-        let url = userStationsURL
-
         if fileManager.fileExists(
-            atPath: url.path
+            atPath: userStationsURL.path
         ) {
             return loadUserStations(
-                from: url
+                from: userStationsURL
             )
         }
 
@@ -35,51 +33,47 @@ final class StationLoader {
 
     func resetToDefaults() -> [RadioStation] {
 
-        guard let defaultStations = loadBundledStations() else {
+        guard let bundledStations = loadBundledStations() else {
             return []
         }
 
-        let userStations = defaultStations.map {
-            UserStation(
-                id: $0.id,
-                name: $0.name,
-                genre: $0.genre,
-                streamURL: $0.streamURL,
-                artworkURL: $0.artworkURL,
-                country: $0.country,
-                tags: $0.tags
-            )
-        }
+        let userStations = bundledStations.map(
+            makeUserStation
+        )
 
         do {
-            try saveUserStations(userStations)
 
-            return userStations.map {
-                $0.makeRadioStation()
-            }
+            try saveUserStations(
+                userStations
+            )
+
+            return makeRadioStations(
+                from: userStations
+            )
 
         } catch {
+
             print(
                 "Unable to reset stations:",
                 error
             )
 
-            return defaultStations
+            return bundledStations
         }
     }
 
 
     func openStationsFile() {
 
-        let url = userStationsURL
-
         if !fileManager.fileExists(
-            atPath: url.path
+            atPath: userStationsURL.path
         ) {
             _ = createUserStationsFromDefaults()
         }
 
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared.open(
+            userStationsURL
+        )
     }
 
 
@@ -95,54 +89,44 @@ final class StationLoader {
                 contentsOf: url
             )
 
-            let decodedStations = try JSONDecoder().decode(
-                [UserStation].self,
-                from: data
-            )
+            let decodedStations =
+                try JSONDecoder().decode(
+                    [UserStation].self,
+                    from: data
+                )
 
-            var normalizedStations: [UserStation] = []
-            normalizedStations.reserveCapacity(
-                decodedStations.count
-            )
+            var didNormalize = false
 
-            var didChangeFile = false
+            let normalizedStations =
+                decodedStations.map { station in
 
-            for station in decodedStations {
+                    guard station.id == nil else {
+                        return station
+                    }
 
-                if station.id != nil {
+                    didNormalize = true
 
-                    normalizedStations.append(
-                        station
+                    return UserStation(
+                        id: UUID(),
+                        name: station.name,
+                        genre: station.genre,
+                        streamURL: station.streamURL,
+                        artworkURL: station.artworkURL,
+                        country: station.country,
+                        tags: station.tags
                     )
-
-                } else {
-
-                    normalizedStations.append(
-                        UserStation(
-                            id: UUID(),
-                            name: station.name,
-                            genre: station.genre,
-                            streamURL: station.streamURL,
-                            artworkURL: station.artworkURL,
-                            country: station.country,
-                            tags: station.tags
-                        )
-                    )
-
-                    didChangeFile = true
                 }
-            }
 
-            if didChangeFile {
+            if didNormalize {
 
                 try saveUserStations(
                     normalizedStations
                 )
             }
 
-            return normalizedStations.map {
-                $0.makeRadioStation()
-            }
+            return makeRadioStations(
+                from: normalizedStations
+            )
 
         } catch {
 
@@ -160,9 +144,10 @@ final class StationLoader {
         _ stations: [UserStation]
     ) throws {
 
-        let data = try JSONEncoder.prettyPrinted.encode(
-            stations
-        )
+        let data =
+            try JSONEncoder.prettyPrinted.encode(
+                stations
+            )
 
         try fileManager.createDirectory(
             at: applicationSupportURL,
@@ -182,21 +167,16 @@ final class StationLoader {
         -> [RadioStation]
     {
 
-        guard let bundledStations = loadBundledStations() else {
+        guard let bundledStations =
+            loadBundledStations()
+        else {
             return []
         }
 
-        let userStations = bundledStations.map {
-            UserStation(
-                id: $0.id,
-                name: $0.name,
-                genre: $0.genre,
-                streamURL: $0.streamURL,
-                artworkURL: $0.artworkURL,
-                country: $0.country,
-                tags: $0.tags
+        let userStations =
+            bundledStations.map(
+                makeUserStation
             )
-        }
 
         do {
 
@@ -212,9 +192,9 @@ final class StationLoader {
             )
         }
 
-        return userStations.map {
-            $0.makeRadioStation()
-        }
+        return makeRadioStations(
+            from: userStations
+        )
     }
 
 
@@ -257,15 +237,51 @@ final class StationLoader {
     }
 
 
+    // MARK: - Conversion
+
+    private func makeUserStation(
+        from station: RadioStation
+    ) -> UserStation {
+
+        UserStation(
+            id: station.id,
+            name: station.name,
+            genre: station.genre,
+            streamURL: station.streamURL,
+            artworkURL: station.artworkURL,
+            country: station.country,
+            tags: station.tags
+        )
+    }
+
+
+    private func makeRadioStations(
+        from stations: [UserStation]
+    ) -> [RadioStation] {
+
+        stations.map {
+            $0.makeRadioStation()
+        }
+    }
+
+
     // MARK: - Paths
 
     private var applicationSupportURL: URL {
 
-        fileManager.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        )[0]
-        .appendingPathComponent(
+        guard let baseURL =
+            fileManager.urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            ).first
+        else {
+            return URL(
+                fileURLWithPath:
+                    NSHomeDirectory()
+            )
+        }
+
+        return baseURL.appendingPathComponent(
             applicationSupportDirectoryName,
             isDirectory: true
         )
@@ -274,10 +290,9 @@ final class StationLoader {
 
     private var userStationsURL: URL {
 
-        applicationSupportURL
-            .appendingPathComponent(
-                stationsFileName
-            )
+        applicationSupportURL.appendingPathComponent(
+            stationsFileName
+        )
     }
 }
 
