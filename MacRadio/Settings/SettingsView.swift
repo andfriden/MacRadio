@@ -25,6 +25,59 @@ struct SettingsView: View {
                         $appState.settings.notificationsEnabled
                 )
             }
+
+
+            Section(
+                "Stations"
+            ) {
+
+                VStack(
+                    alignment: .leading,
+                    spacing: 8
+                ) {
+
+                    Text(
+                        "Your stations are stored in a local stations.json file."
+                    )
+                    .font(
+                        .caption
+                    )
+                    .foregroundStyle(
+                        .secondary
+                    )
+
+
+                    Button(
+                        "Open Stations File"
+                    ) {
+
+                        appState.stationManager
+                            .openStationsFile()
+                    }
+
+
+                    Button(
+                        "Reload Stations"
+                    ) {
+
+                        appState.stationManager
+                            .reload()
+                    }
+
+
+                    Button(
+                        "Reset to Default Stations"
+                    ) {
+
+                        appState.stationManager
+                            .resetToDefaults()
+                    }
+                }
+                .padding(
+                    .vertical,
+                    4
+                )
+            }
         }
         .formStyle(
             .grouped

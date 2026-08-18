@@ -32,6 +32,7 @@
 		BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14930311D2400F76186 /* AppSettings.swift */; };
 		BA84C14C3031417B00F76186 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14B3031417B00F76186 /* MenuBarIcon.swift */; };
 		BA84C14E3031465600F76186 /* PlayerStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA84C14D3031465600F76186 /* PlayerStatusView.swift */; };
+		BA8E5557303463460071F548 /* UserStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8E5556303463460071F548 /* UserStation.swift */; };
 		BA9563F0303263BF00245920 /* AllStationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9563EF303263BF00245920 /* AllStationsView.swift */; };
 		BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D093031D59C0003242E /* StationRowView.swift */; };
 		BAEE4D0C3031D8AC0003242E /* StationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEE4D0B3031D8AC0003242E /* StationListView.swift */; };
@@ -68,6 +69,8 @@
 		BA84C14B3031417B00F76186 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		BA84C14D3031465600F76186 /* PlayerStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStatusView.swift; sourceTree = "<group>"; };
 		BA8A19D6302F55A300DF0174 /* MacRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA8E5556303463460071F548 /* UserStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStation.swift; sourceTree = "<group>"; };
+		BA8E555830346E0C0071F548 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA9563EF303263BF00245920 /* AllStationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllStationsView.swift; sourceTree = "<group>"; };
 		BAEE4D093031D59C0003242E /* StationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationRowView.swift; sourceTree = "<group>"; };
 		BAEE4D0B3031D8AC0003242E /* StationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationListView.swift; sourceTree = "<group>"; };
@@ -189,6 +192,7 @@
 				BA84C12330311C2A00F76186 /* PlayerState.swift */,
 				BA84C12430311C2A00F76186 /* RadioStation.swift */,
 				BA84C12630311C2A00F76186 /* Track.swift */,
+				BA8E5556303463460071F548 /* UserStation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -226,6 +230,7 @@
 				BA84C12F30311C2A00F76186 /* Views */,
 				BA84C13130311C2A00F76186 /* Assets.xcassets */,
 				BA84C13230311C2A00F76186 /* MacRadio.entitlements */,
+				BA8E555830346E0C0071F548 /* Info.plist */,
 			);
 			path = MacRadio;
 			sourceTree = "<group>";
@@ -344,6 +349,7 @@
 				BA84C14030311C2A00F76186 /* MacRadioApp.swift in Sources */,
 				BA84C14130311C2A00F76186 /* StationLoader.swift in Sources */,
 				BA84C14A30311D2400F76186 /* AppSettings.swift in Sources */,
+				BA8E5557303463460071F548 /* UserStation.swift in Sources */,
 				BAEE4D0A3031D59C0003242E /* StationRowView.swift in Sources */,
 				BA70987B3033344200946EBA /* RadioPlayer+Playback.swift in Sources */,
 				BA84C14430311C2A00F76186 /* Track.swift in Sources */,
@@ -498,6 +504,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacRadio/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -540,6 +547,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacRadio/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
