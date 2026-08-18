@@ -68,12 +68,35 @@ final class StationManager: ObservableObject {
         restoreLastStation()
     }
 
+         
+    // MARK: - User Stations
 
-    func openStationsFile() {
+    func addStation(
+        name: String,
+        streamURL: URL,
+        artworkURL: URL?
+    ) throws {
 
-        loader.openStationsFile()
+        let station = UserStation(
+            id: UUID(),
+            name: name,
+            genre: nil,
+            streamURL: streamURL,
+            artworkURL: artworkURL,
+            country: nil,
+            tags: nil
+        )
+
+        try loader.addUserStation(
+            station
+        )
+
+        stations = loader.load()
+        restoreFavorites()
     }
 
+
+    
 
     // MARK: - Current Station
 

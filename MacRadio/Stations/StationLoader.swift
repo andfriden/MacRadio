@@ -4,7 +4,6 @@
 //
 
 import Foundation
-import AppKit
 
 
 final class StationLoader {
@@ -30,6 +29,24 @@ final class StationLoader {
         }
 
         return createUserStationsFromDefaults()
+    }
+
+
+    func addUserStation(
+        _ station: UserStation
+    ) throws {
+
+        var stations = try loadUserStationsForEditing(
+            from: userStationsURL
+        )
+
+        stations.append(
+            station
+        )
+
+        try saveUserStations(
+            stations
+        )
     }
 
 
@@ -65,23 +82,7 @@ final class StationLoader {
         }
     }
 
-
-    func openStationsFile() {
-
-        let url = userStationsURL
-
-        if !fileManager.fileExists(
-            atPath: url.path
-        ) {
-            _ = createUserStationsFromDefaults()
-        }
-
-        NSWorkspace.shared.open(
-            url
-        )
-    }
-
-
+    
     // MARK: - User Stations
 
     private func loadUserStations(
@@ -90,60 +91,13 @@ final class StationLoader {
 
         do {
 
-            let data =
-                try Data(
-                    contentsOf: url
+            let stations =
+                try loadUserStationsForEditing(
+                    from: url
                 )
-
-            let decodedStations =
-                try JSONDecoder().decode(
-                    [UserStation].self,
-                    from: data
-                )
-
-            var normalizedStations: [UserStation] = []
-
-            normalizedStations.reserveCapacity(
-                decodedStations.count
-            )
-
-            var didChangeFile = false
-
-            for station in decodedStations {
-
-                if station.id != nil {
-
-                    normalizedStations.append(
-                        station
-                    )
-
-                } else {
-
-                    normalizedStations.append(
-                        UserStation(
-                            id: UUID(),
-                            name: station.name,
-                            genre: station.genre,
-                            streamURL: station.streamURL,
-                            artworkURL: station.artworkURL,
-                            country: station.country,
-                            tags: station.tags
-                        )
-                    )
-
-                    didChangeFile = true
-                }
-            }
-
-            if didChangeFile {
-
-                try saveUserStations(
-                    normalizedStations
-                )
-            }
 
             return makeRadioStations(
-                from: normalizedStations
+                from: stations
             )
 
         } catch {
@@ -155,6 +109,72 @@ final class StationLoader {
 
             return []
         }
+    }
+
+
+    private func loadUserStationsForEditing(
+        from url: URL
+    ) throws -> [UserStation] {
+
+        guard fileManager.fileExists(
+            atPath: url.path
+        ) else {
+            return []
+        }
+
+        let data =
+            try Data(
+                contentsOf: url
+            )
+
+        let decodedStations =
+            try JSONDecoder().decode(
+                [UserStation].self,
+                from: data
+            )
+
+        var normalizedStations: [UserStation] = []
+
+        normalizedStations.reserveCapacity(
+            decodedStations.count
+        )
+
+        var didChangeFile = false
+
+        for station in decodedStations {
+
+            if station.id != nil {
+
+                normalizedStations.append(
+                    station
+                )
+
+            } else {
+
+                normalizedStations.append(
+                    UserStation(
+                        id: UUID(),
+                        name: station.name,
+                        genre: station.genre,
+                        streamURL: station.streamURL,
+                        artworkURL: station.artworkURL,
+                        country: station.country,
+                        tags: station.tags
+                    )
+                )
+
+                didChangeFile = true
+            }
+        }
+
+        if didChangeFile {
+
+            try saveUserStations(
+                normalizedStations
+            )
+        }
+
+        return normalizedStations
     }
 
 

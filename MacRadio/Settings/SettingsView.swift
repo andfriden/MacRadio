@@ -10,6 +10,8 @@ struct SettingsView: View {
 
     @EnvironmentObject var appState: AppState
 
+    @State private var showingAddStation = false
+
 
     var body: some View {
 
@@ -35,27 +37,16 @@ struct SettingsView: View {
                     alignment: .leading,
                     spacing: 8
                 ) {
-
-                    Text(
-                        "Your stations are stored in a local stations.json file."
-                    )
-                    .font(
-                        .caption
-                    )
-                    .foregroundStyle(
-                        .secondary
-                    )
-
-
-                    Button(
-                        "Open Stations File"
-                    ) {
-
-                        appState.stationManager
-                            .openStationsFile()
+                   
+                    Button {
+                        showingAddStation = true
+                    } label: {
+                        Label(
+                            "Add Station",
+                            systemImage: "plus"
+                        )
                     }
-
-
+                   
                     Button(
                         "Reload Stations"
                     ) {
@@ -86,5 +77,14 @@ struct SettingsView: View {
         .frame(
             width: 320
         )
+        .sheet(
+            isPresented: $showingAddStation
+        ) {
+
+            AddStationView()
+                .environmentObject(
+                    appState
+                )
+        }
     }
 }

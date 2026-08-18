@@ -69,18 +69,18 @@ jobs:
             -srcfolder build/dmg \
             -ov \
             -format UDZO \
-            "build/${DMG_NAME}"
+            "Packages/${DMG_NAME}"
 
           echo "DMG_NAME=${DMG_NAME}" >> "$GITHUB_ENV"
 
       - name: Verify DMG
         run: |
-          ls -lh "build/${DMG_NAME}"
-          file "build/${DMG_NAME}"
+          ls -lh "Packages/${DMG_NAME}"
+          file "Packages/${DMG_NAME}"
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
           name: MacRadio-DMG
-          path: build/*.dmg
+          path: Packages/*.dmg
           if-no-files-found: error
