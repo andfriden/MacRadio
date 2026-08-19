@@ -6,8 +6,10 @@ on:
       - main
     tags:
       - "v*"
-
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -64,6 +66,8 @@ jobs:
             DMG_NAME="MacRadio-${GITHUB_SHA::7}.dmg"
           fi
 
+          mkdir -p Packages
+
           hdiutil create \
             -volname "MacRadio" \
             -srcfolder build/dmg \
@@ -78,9 +82,20 @@ jobs:
           ls -lh "Packages/${DMG_NAME}"
           file "Packages/${DMG_NAME}"
 
-      - name: Upload DMG
+      - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
           name: MacRadio-DMG
           path: Packages/*.dmg
           if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            Packages/*.dmg \
+            --generate-notes \
+            --title "MacRadio $GITHUB_REF_NAME"
+
