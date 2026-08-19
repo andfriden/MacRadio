@@ -37,25 +37,15 @@ struct MenuBarStationListView: View {
             spacing: 6
         ) {
 
-            Text(
-                "Recent Stations"
-            )
-            .font(
-                .headline
-            )
+            Text("Recent Stations")
+                .font(.headline)
 
 
             if appState.stationManager.recentStations.isEmpty {
 
-                Text(
-                    "No recent stations"
-                )
-                .font(
-                    .caption
-                )
-                .foregroundStyle(
-                    .secondary
-                )
+                Text("No recent stations")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
             } else {
 
@@ -75,36 +65,55 @@ struct MenuBarStationListView: View {
             }
 
 
-            Button {
+            Divider()
 
-                showingAllStations = true
 
-            } label: {
+            HStack {
 
-                HStack {
+                Button {
 
-                    Text(
-                        "All Stations"
-                    )
+                    showingAllStations = true
 
-                    Spacer()
+                } label: {
 
-                    Image(
-                        systemName: "chevron.right"
-                    )
-                    .foregroundStyle(
-                        .secondary
-                    )
+                    HStack(
+                        spacing: 4
+                    ) {
+
+                        Text("All Stations")
+
+                        Image(
+                            systemName: "chevron.right"
+                        )
+                        .foregroundStyle(.secondary)
+                    }
                 }
+                .buttonStyle(.plain)
+
+
+                Spacer()
+
+
+                SettingsLink {
+
+                    HStack(
+                        spacing: 4
+                    ) {
+
+                        Text("Settings")
+
+                        Image(
+                            systemName: "gearshape"
+                        )
+                    }
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(
-                .plain
-            )
-            .padding(
-                .top,
-                4
-            )
         }
+        .padding(12)
+        .frame(
+            width: 320
+        )
     }
 
 
@@ -137,30 +146,23 @@ struct MenuBarStationListView: View {
 
                     VStack(
                         alignment: .leading,
-                        spacing: 1
+                        spacing: 2
                     ) {
 
                         Text(
                             station.name
                         )
-                        .lineLimit(
-                            1
-                        )
+                        .lineLimit(1)
+
 
                         if let genre = station.genre {
 
                             Text(
                                 genre
                             )
-                            .font(
-                                .caption
-                            )
-                            .foregroundStyle(
-                                .secondary
-                            )
-                            .lineLimit(
-                                1
-                            )
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
                         }
                     }
 
@@ -170,18 +172,13 @@ struct MenuBarStationListView: View {
                     ) {
 
                         Image(
-                            systemName:
-                                "checkmark.circle.fill"
+                            systemName: "checkmark.circle.fill"
                         )
-                        .foregroundStyle(
-                            .secondary
-                        )
+                        .foregroundStyle(.secondary)
                     }
                 }
             }
-            .buttonStyle(
-                .plain
-            )
+            .buttonStyle(.plain)
 
 
             Spacer()
@@ -189,10 +186,9 @@ struct MenuBarStationListView: View {
 
             Button {
 
-                appState.stationManager
-                    .toggleFavorite(
-                        station
-                    )
+                appState.stationManager.toggleFavorite(
+                    station
+                )
 
             } label: {
 
@@ -203,14 +199,7 @@ struct MenuBarStationListView: View {
                         : "star"
                 )
             }
-            .buttonStyle(
-                .plain
-            )
-            .help(
-                station.isFavorite
-                ? "Remove from favorites"
-                : "Add to favorites"
-            )
+            .buttonStyle(.plain)
         }
     }
 
@@ -265,9 +254,7 @@ struct MenuBarStationListView: View {
             height: 24
         )
         .background(
-            Color.secondary.opacity(
-                0.12
-            )
+            Color.secondary.opacity(0.12)
         )
         .clipShape(
             RoundedRectangle(
@@ -283,7 +270,6 @@ struct MenuBarStationListView: View {
         _ station: RadioStation
     ) -> Bool {
 
-        appState.player.currentStation?.id ==
-            station.id
+        appState.player.currentStation?.id == station.id
     }
 }
