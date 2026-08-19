@@ -1,169 +1,254 @@
 # MacRadio
 
-<p align="center">
-  <a href="#русский">🇷🇺 Русский</a>
-  &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="#english">🇬🇧 English</a>
-</p>
+**Минималистичный радиоплеер для macOS, работающий прямо из Menu Bar.**
+
+**🇷🇺 Русский** · [🇬🇧 English](#english)
 
 ---
 
-<a id="русский"></a>
+## 🇷🇺 Русский
 
-# 🇷🇺 Русский
+MacRadio — нативный радиоплеер для macOS, созданный для прослушивания интернет-радио без отдельного большого окна.
 
-MacRadio — минималистичный нативный радиоплеер для macOS с основным управлением через Menu Bar.
+Основное взаимодействие происходит через компактный Menu Bar Player с быстрым доступом к воспроизведению, громкости, информации о треке и радиостанциям.
 
-## Возможности
+### Возможности
 
-* Воспроизведение интернет-радиостанций через `AVPlayer`.
-* Управление воспроизведением из Menu Bar.
-* Play / Pause, Previous / Next.
-* Громкость и Mute.
-* Недавние станции.
-* Избранные станции.
-* Пользовательские станции с локальным хранением.
-* Отображение ICY metadata, когда станция действительно передаёт информацию о текущем треке.
-* Artwork для текущего трека, когда изображение найдено.
-* Автоматическая пауза при блокировке экрана и переходе системы в sleep.
-* Восстановление воспроизведения после wake.
-* Состояния плеера: `connecting`, `buffering`, `reconnecting`, `playing`, `paused`, `failed`, `stopped`.
-* Автоматическое переподключение при проблемах с потоком.
-* `MPNowPlayingInfoCenter`.
-* Media keys.
-* Notification Center.
-* Системные команды Play / Pause / Previous / Next.
+* Нативный Menu Bar Player для macOS
+* Play / Pause
+* Переключение предыдущей / следующей станции
+* Управление громкостью и Mute
+* Библиотека радиостанций
+* Недавно использованные станции
+* Добавление пользовательских радиостанций
+* Необязательный логотип станции
+* Artwork станции и текущего трека
+* Поддержка ICY Metadata
+* Автоматическое восстановление после сна, пробуждения и временных проблем с потоком
+* Минималистичный интерфейс в стиле macOS
+* Универсальная сборка для macOS
 
-## ICY Metadata
+### ICY Metadata
 
-MacRadio использует ICY metadata для получения информации о текущем треке.
+MacRadio поддерживает ICY Metadata для совместимых радиопотоков.
 
-Важно: наличие заголовка `icy-metaint` ещё не означает, что станция передаёт название текущей композиции.
+Когда поток предоставляет корректные метаданные, плеер может отображать:
 
-Некоторые станции объявляют поддержку ICY metadata, но передают пустой `StreamTitle` или оставляют metadata-блоки пустыми.
+* исполнителя;
+* название трека;
+* информацию о потоке.
 
-В таком случае:
+Доступность и корректность метаданных зависят от радиостанции и её streaming-сервера.
 
-* поток продолжает нормально воспроизводиться;
-* ICY reader работает штатно;
-* исполнитель и название композиции не отображаются, потому что источник не передаёт эти данные.
+Не все станции предоставляют ICY Metadata. Некоторые потоки передают неполные данные или обновляют их некорректно. В таких случаях MacRadio продолжает воспроизведение, но информация об исполнителе или текущем треке может отсутствовать или отображаться некорректно.
 
-Например, поток `rusradio128.mp3` сообщает `icy-metaint`, но возвращает пустой `StreamTitle`. Это ограничение конкретного радиопотока, а не ошибка MacRadio.
+### Пользовательские станции
 
-## Пользовательские станции
+MacRadio позволяет добавлять собственные радиостанции.
 
-Пользовательские станции хранятся локально в:
+Обязательные поля:
 
-`~/Library/Application Support/MacRadio/stations.json`
+* Название станции
+* URL потока
 
-Файл можно открыть из Settings → Stations → Open Stations File.
+Логотип станции является необязательным.
 
-## Восстановление плеера
+Это позволяет использовать радиопотоки, которых нет во встроенной библиотеке MacRadio.
 
-Если поток временно перестал отвечать, MacRadio отслеживает buffering/stall и выполняет автоматическое переподключение.
+### Требования
 
-После достижения лимита попыток состояние плеера переходит в `failed`, после чего можно выполнить повторную попытку вручную.
+* macOS
+* Xcode 26.5 или новее для разработки
+* Swift / SwiftUI
+* AVFoundation
 
-При блокировке экрана или переходе системы в sleep воспроизведение приостанавливается. После wake MacRadio создаёт новый `AVPlayer` и восстанавливает поток текущей станции.
+### Установка
 
-## Архитектура
+Скачайте последнюю версию MacRadio и откройте DMG.
 
-Проект построен на SwiftUI и AVFoundation.
+Перетащите **MacRadio** в папку Applications.
 
-Основные части:
+MacRadio работает как Menu Bar приложение и не отображается как обычное приложение в Dock.
 
-* `RadioPlayer` — воспроизведение и состояние плеера.
-* `ICYMetadataReader` — чтение ICY metadata из потока.
-* `MetadataService` — разбор track metadata и поиск artwork.
-* `StationManager` — выбор станций, recent и favorites.
-* `StationLoader` — загрузка bundled и user stations.
-* `AppSettings` — сохранение настроек через `UserDefaults`.
-* `AppState` — центральная композиция зависимостей приложения.
-* `AppDelegate` — Menu Bar item, popover и системные события.
+### Сборка из исходного кода
 
-## Разработка
+Клонируйте репозиторий:
 
-Проект предназначен для нативной разработки под macOS с использованием Xcode, SwiftUI и AVFoundation.
+```bash
+git clone https://github.com/andfriden/MacRadio.git
+cd MacRadio
+```
 
-Перед изменением существующего поведения желательно сначала проверить соответствующий lifecycle и состояние плеера. Для networking и ICY metadata важно учитывать особенности конкретных радиопотоков.
+Откройте проект в Xcode:
+
+```bash
+open MacRadio.xcodeproj
+```
+
+Выберите схему **MacRadio** и соберите проект.
+
+### Структура проекта
+
+Проект построен на SwiftUI и AVFoundation и разделён на несколько основных компонентов:
+
+* `Models` — радиостанции и состояние плеера
+* `Services` — состояние приложения, metadata, artwork и загрузка станций
+* `Storage` — сохранение настроек приложения
+* `Audio` — воспроизведение радио и восстановление соединения
+* `Views` — интерфейс Menu Bar и работа со станциями
+
+Большое окно в стиле Apple Music остаётся изолированным от основного Menu Bar интерфейса и не является частью основного рабочего сценария MacRadio.
+
+### Текущие ограничения
+
+* ICY Metadata доступен не для всех радиопотоков.
+* Некоторые станции передают неполные или некорректные метаданные.
+* Доступность логотипов и artwork зависит от источника данных.
+* Пользовательские станции требуют корректный и совместимый URL потока.
+* Поведение некоторых потоков может зависеть от сервера радиостанции и сетевых условий.
+
+### Roadmap
+
+MacRadio активно развивается.
+
+Планируемые улучшения:
+
+* дальнейшее улучшение управления станциями;
+* редактирование и удаление пользовательских станций;
+* улучшение поиска metadata и artwork;
+* интеграция с media keys macOS;
+* интеграция с Notification Center и Now Playing;
+* дальнейшие улучшения плеера и восстановления воспроизведения.
+
+### Лицензия
+
+Проект находится в активной разработке.
+
+Информация о лицензии будет добавлена перед первым публичным релизом.
 
 ---
 
 <a id="english"></a>
 
-# 🇬🇧 English
+## 🇬🇧 English
 
-MacRadio is a minimal native macOS radio player focused on a Menu Bar workflow.
+MacRadio is a native radio player for macOS, designed to let you listen to internet radio without keeping a large player window open.
 
-## Features
+The main interaction happens through a compact Menu Bar Player with quick access to playback, volume, track information, and stations.
 
-* Internet radio playback using `AVPlayer`.
-* Menu Bar based playback control.
-* Play / Pause, Previous / Next.
-* Volume and Mute controls.
-* Recent stations.
-* Favorite stations.
-* User stations with local storage.
-* ICY metadata display when the station actually provides current track information.
-* Artwork for the current track when artwork can be found.
-* Automatic pause on screen lock and system sleep.
-* Playback recovery after wake.
-* Player states: `connecting`, `buffering`, `reconnecting`, `playing`, `paused`, `failed`, and `stopped`.
-* Automatic reconnect when the stream fails.
-* `MPNowPlayingInfoCenter`.
-* Media keys.
-* Notification Center.
-* System Play / Pause / Previous / Next commands.
+**[🇷🇺 Русский](#macradio)** · **🇬🇧 English**
 
-## ICY Metadata
+### Features
 
-MacRadio uses ICY metadata to obtain current track information.
+* Native macOS Menu Bar Player
+* Play / Pause
+* Previous / Next station
+* Volume and Mute controls
+* Station library
+* Recent stations
+* User-added radio stations
+* Optional station artwork
+* Station and track artwork
+* ICY Metadata support
+* Automatic recovery after sleep, wake, and temporary stream interruptions
+* Minimal macOS-native interface
+* Universal macOS build
 
-Important: the presence of the `icy-metaint` header does not guarantee that a station provides the current track title.
+### ICY Metadata
 
-Some stations advertise ICY metadata support but send an empty `StreamTitle` or otherwise provide empty metadata blocks.
+MacRadio supports ICY Metadata from compatible radio streams.
 
-In that case:
+When available, the player can display:
 
-* the audio stream can continue playing normally;
-* the ICY reader is working correctly;
-* artist and track information are not displayed because the stream does not provide them.
+* Artist
+* Track title
+* Stream information
 
-For example, the `rusradio128.mp3` stream provides `icy-metaint` but returns an empty `StreamTitle`. This is a limitation of the radio stream, not a MacRadio error.
+Metadata availability and accuracy depend on the radio station and its streaming server.
 
-## User Stations
+Not every station provides ICY Metadata. Some streams provide incomplete information or update metadata incorrectly. In these cases, MacRadio continues playback normally, but artist or track information may be missing or inaccurate.
 
-User stations are stored locally in:
+### User Stations
 
-`~/Library/Application Support/MacRadio/stations.json`
+MacRadio allows you to add your own radio stations.
 
-The file can be opened from Settings → Stations → Open Stations File.
+Required fields:
 
-## Player Recovery
+* Station name
+* Stream URL
 
-When a stream becomes unavailable, MacRadio detects buffering/stalls and performs automatic reconnect attempts.
+A station logo is optional.
 
-After the retry limit is reached, the player enters the `failed` state and can be retried manually.
+This makes it possible to use radio streams that are not included in the built-in MacRadio station library.
 
-When the screen is locked or the system goes to sleep, playback is paused. After wake, MacRadio creates a new `AVPlayer` and restores the current station stream.
+### Requirements
 
-## Architecture
+* macOS
+* Xcode 26.5 or later for development
+* Swift / SwiftUI
+* AVFoundation
 
-The project is built with SwiftUI and AVFoundation.
+### Installation
 
-Main components:
+Download the latest MacRadio release and open the DMG.
 
-* `RadioPlayer` — playback and player state.
-* `ICYMetadataReader` — reads ICY metadata from the stream.
-* `MetadataService` — parses track metadata and searches for artwork.
-* `StationManager` — station selection, recent stations, and favorites.
-* `StationLoader` — loads bundled and user stations.
-* `AppSettings` — persists settings using `UserDefaults`.
-* `AppState` — central application dependency composition.
-* `AppDelegate` — Menu Bar item, popover, and system events.
+Drag **MacRadio** to the Applications folder.
 
-## Development
+MacRadio runs as a Menu Bar application and does not appear as a regular application in the Dock.
 
-The project targets native macOS development using Xcode, SwiftUI, and AVFoundation.
+### Building from Source
 
-Before changing existing behavior, verify the relevant player lifecycle and state transitions. For networking and ICY metadata, keep stream-specific behavior in mind.
+Clone the repository:
+
+```bash
+git clone https://github.com/andfriden/MacRadio.git
+cd MacRadio
+```
+
+Open the project in Xcode:
+
+```bash
+open MacRadio.xcodeproj
+```
+
+Select the **MacRadio** scheme and build the project.
+
+### Project Structure
+
+The project is built with SwiftUI and AVFoundation and follows a modular structure:
+
+* `Models` — radio stations and player state
+* `Services` — application state, metadata, artwork, and station loading
+* `Storage` — persistent application settings
+* `Audio` — radio playback and recovery
+* `Views` — Menu Bar and station interface
+
+The large Apple Music-style player window remains isolated from the main Menu Bar experience and is not part of the core MacRadio workflow.
+
+### Current Limitations
+
+* ICY Metadata is not available from every radio stream.
+* Some stations provide incomplete or inaccurate metadata.
+* Station logos and artwork depend on available data sources.
+* User stations require a valid and compatible stream URL.
+* Some streams may behave differently depending on their server or network conditions.
+
+### Roadmap
+
+MacRadio is actively developed.
+
+Planned improvements include:
+
+* Further improvements to station management
+* Editing and deleting user stations
+* Enhanced metadata and artwork handling
+* macOS media key integration
+* Notification Center and Now Playing integration
+* Additional player and playback improvements
+
+### License
+
+This project is currently under development.
+
+License information will be added before the first public release.
+
